@@ -23,43 +23,11 @@
         <p class="subtitle my-2">Incomplete: xx Tasks</p>
         <div class="columns">
           <div class="column is-8">
-            <div class="box level py-3 my-2">
+            <div class="box level py-3 my-2" v-for='label in task'>
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" />
-                  Item 1
-                </label>
-              </div>
-              <div class="level-right">
-                <span class="icon is-small">
-                  <i class="fas fa-edit"></i>
-                </span>
-                <span class="icon is-small ml-5">
-                  <i class="fas fa-trash-alt"></i>
-                </span>
-              </div>
-            </div>
-            <div class="box level py-3 my-2">
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" />
-                  Item 2
-                </label>
-              </div>
-              <div class="level-right">
-                <span class="icon is-small">
-                  <i class="fas fa-edit"></i>
-                </span>
-                <span class="icon is-small ml-5">
-                  <i class="fas fa-trash-alt"></i>
-                </span>
-              </div>
-            </div>
-            <div class="box level py-3 my-2">
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" />
-                  Item 3
+                  <input type="checkbox" v-on:click='lineT(label.id)'/>
+                  {{label.name}}
                 </label>
               </div>
               <div class="level-right">
@@ -75,13 +43,13 @@
               <div class="column is-8">
                 <div class="field">
                   <div class="control">
-                    <input class="input" type="text" placeholder="Task Name" />
+                    <input class="input" type="text" placeholder="Task Name" v-model='taskName'/>
                   </div>
                 </div>
               </div>
               <div class="column is-4">
                 <p class="control">
-                  <a class="button is-info"> Add New Task </a>
+                  <a class="button is-info" v-on:click='addTask'> Add New Task </a>
                 </p>
               </div>
             </div>
@@ -121,7 +89,31 @@
       var app = new Vue({
         el: "#app",
         data: {
+          task: [],
+          toDoList: [],
+          taskIDCount: 1,
+          taskName: '',
         },
+        methods: {
+          addTask(){
+            namee = this.taskName
+            this.task.push({
+              id: this.taskIDCount,
+              name: namee,
+              isComplete: false,
+              // listID: this.toDoListCount
+            })
+            this.taskIDCount++
+          },
+          lineT(id){
+            console.log(id)
+            for(let i = 0; i < this.task.length; i++){
+              if(id === this.task[i].id){
+                this.task[i].isComplete = !this.task[i].isComplete
+              }
+            }
+          }
+        }
       });
     </script>
   </body>
