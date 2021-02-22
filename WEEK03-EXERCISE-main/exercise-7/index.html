@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" />
+    <title>WEEK 3 - Exercise</title>
+    <style>
+        .example-gif {
+            max-width: 600px;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ============================================================ -->
+    <!-- ตัวอย่าง HTML -->
+    <!-- ============================================================ -->
+    <section class="section">
+        <h1 class="is-size-1">WEEK 3 - Exercise 7, DOM</h1>
+        <hr />
+        <div class="columns">
+            <div id="product-list" class="column">
+                <h5 class="is-size-4 mb-3">รายการสินค้า</h5>
+                <div class="columns">
+                    <div class="column">
+                        <a id="1" onclick="addToCart(1)">
+                            <div class="box product">
+                                <span class="title">น้ำดื่ม</span>
+                                <span class="pl-2 price" style="color: black;">10.00 ฿</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <a id="2" onclick="addToCart(2)">
+                            <div class="box product">
+                                <span class="title">โคล่า</span>
+                                <span class="pl-2 price">15.00 ฿</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <a id="3" onclick="addToCart(3)">
+                            <div class="box product">
+                                <span class="title">ชานมไข่มุก</span>
+                                <span class="pl-2 price">40.00 ฿</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <a id="4" onclick="addToCart(4)">
+                            <div class="box product">
+                                <span class="title">ชาเขียว</span>
+                                <span class="pl-2 price">30.00 ฿</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-4">
+                <h5 class="is-size-4">ตะกร้าสินค้า</h5>
+                <table id="cart" class="table is-fullwidth">
+                    <thead id="cart">
+                        <tr>
+                            <td>สินค้า</td>
+                            <td>จำนวน</td>
+                            <td>ราคา</td>
+                            <!-- PROBLEM 7.3 -->
+                            <td>ลบ</td>
+                        </tr>
+                    </thead>
+                    <tbody id='body'></tbody>
+                    <tfoot id='foot'>
+                        <th></th>
+                        <th id='allAmount'></th>
+                        <th id='tprice'></th>
+                        <th></th>
+                    </tfoot>
+                    <!-- PROBLEM 7.4 -->
+                    <!-- <tfoot>
+              <th></th>
+              <th id="total-amount"></th>
+              <th id="total-price"></th>
+              <th></th>
+            </tfoot>   -->
+                </table>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <h5 class="is-size-4"></h5>
+            </div>
+        </div>
+    </section>
+    <hr>
+
+    <!-- ============================================================ -->
+    <!-- อธิบายโจทย์ -->
+    <!-- ============================================================ -->
+    <section class="section">
+        <div class="columns">
+            <div class="column">
+                <p>
+                    จากโค๊ด HTML ที่ให้มาด้านบน เป็น template สำหรับโปรแกรมขายของอย่างง่าย ให้เขียน javascript เพื่อให้มันทำงานได้
+                </p>
+                <br>
+
+                <h5 class="is-size-4">PROBLEM 7.1</h5>
+                <p>เมื่อคลิกที่สินค้า ให้ alert แสดงชื่อสินค้า และ ราคาสินค้า โดยให้ substring เอาสัญลักษณ์ ฿ ออกไป</p>
+                <img src="./imgs/p1.gif" class="example-gif">
+                <hr>
+
+                <h5 class="is-size-4">PROBLEM 7.2</h5>
+                <p>เมื่อคลิกที่สินค้า ให้เพิ่ม <code>&lt;tr&gt;</code> เข้าไปในตะกร้าสินค้า</p>
+                <img src="./imgs/p2.gif" class="example-gif">
+                <hr>
+
+                <h5 class="is-size-4">PROBLEM 7.3</h5>
+                <p>จาก PROBLEM 7.2 ให้เพิ่มปุ่มลบเข้าไปในแต่ละแถวด้วย</p>
+                <img src="./imgs/p3.gif" class="example-gif">
+                <hr>
+
+                <h5 class="is-size-4">PROBLEM 7.4</h5>
+                <p>ให้รวมจำนวนและราคาสินค้าในตะกร้าใน <code>&lt;tfoot&gt;</code></p>
+                <img src="./imgs/p4.gif" class="example-gif">
+            </div>
+        </div>
+    </section>
+
+</body>
+
+<script>
+    let totalprice = 0
+    let allAmount = 0
+    let drink = [{
+        'name': 'น้ำดื่ม',
+        'price': 10.00,
+        'amount': 0,
+        'total': 0
+    }, {
+        'name': 'โคล่า',
+        'price': 15.00,
+        'amount': 0,
+        'total': 0
+    }, {
+        'name': 'ชานม',
+        'price': 40.00,
+        'amount': 0,
+        'total': 0
+    }, {
+        'name': 'ชาเขียว',
+        'price': 30.00,
+        'amount': 0,
+        'total': 0
+    }]
+
+    function addToCart(num) {
+        if (drink[num - 1].amount === 0) {
+            document.getElementById('body').innerHTML += `
+                            <tr id="drink${num}">
+                                <td>${drink[num-1].name}</td>
+                                <td id='total${num}'>x${(drink[num-1].amount += 1).toFixed(2)}</td>
+                                <td id='price${num}'>${(drink[num-1].total += drink[num-1].price).toFixed(2)}</td>
+                                <td><button class="button is-danger" id="delete${num}" onclick='deleteCart(${num})'>Delete</button></td>
+                            </tr>`
+        } else if (drink[num - 1].amount > 0) {
+            document.getElementById(`total${num}`).innerHTML = `<td id='total${num}'>x${(drink[num-1].amount += 1).toFixed(2)}</td>`
+            document.getElementById(`price${num}`).innerHTML = `<td id='price${num}'>${(drink[num-1].total += drink[num-1].price).toFixed(2)}</td>`
+
+        }
+        allAmount += 1
+        totalprice += drink[num - 1].price
+        document.getElementById('allAmount').innerHTML = allAmount.toFixed(2)
+        document.getElementById('tprice').innerHTML = totalprice.toFixed(2);
+    }
+
+    function deleteCart(num) {
+        if (drink[num - 1].amount > 1) {
+            document.getElementById(`total${num}`).innerHTML = `<td id='total${num}'>x${(drink[num-1].amount -= 1).toFixed(2)}</td>`
+            document.getElementById(`price${num}`).innerHTML = `<td id='price${num}'>${(drink[num-1].total -= drink[num-1].price).toFixed(2)}</td>`
+        } else if (drink[num - 1].amount === 1) {
+            let removeRow = document.getElementById(`drink${num}`)
+            removeRow.parentNode.removeChild(removeRow);
+            drink[num - 1].amount = 0
+            drink[num - 1].total = 0
+        }
+        allAmount -= 1
+        totalprice -= drink[num - 1].price
+        if (allAmount === 0) {
+            document.getElementById('allAmount').innerHTML = ''
+            document.getElementById('tprice').innerHTML = ''
+        } else {
+            document.getElementById('allAmount').innerHTML = allAmount.toFixed(2)
+            document.getElementById('tprice').innerHTML = totalprice.toFixed(2);
+        }
+    }
+</script>
+
+<!-- <script>
+    if (num === 1) {
+            alert('น้ำดื่ม 10.00')
+        } else if (num === 2) {
+            alert('โคล่า 15.00')
+        } else if (num === 3) {
+            alert('ชานม 40.00')
+        } else if (num === 4) {
+            alert('ชาเขียว 30.00')
+        }
+</script> -->
+
+</html>

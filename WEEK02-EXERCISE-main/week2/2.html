@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+</head>
+
+<body>
+    <form id="form">
+        <!-- สร้างฟอร์มต่อจากนี้เลยยย -->
+        <br>
+
+        <div class="container">
+            <div>
+                <select name="prename">
+                  <option>นาย</option>
+                  <option>นาง</option>
+                  <option>นางสาว</option>
+                </select>
+                <label for="">ชื่อจริง:</label>
+                <input type="text" name="fname">
+                <label for="">นามสกุล:</label>
+                <input type="text" name="lname">
+            </div>
+
+            <div class="mt-3">
+                <label for="">วันเกิด</label>
+                <input type="date" name="dob">
+                <label for="">อายุ</label>
+                <input type="number" name="age">
+            </div>
+
+            <div class="mt-3">
+                <label for="">ชั้นปี</label><br>
+                <input type="radio" name="year">1</input>
+                <input type="radio" name="year">2</input>
+                <input type="radio" name="year">3</input>
+                <input type="radio" name="year">4</input>
+            </div>
+
+            <div class="mt-3">
+                <label>
+                    <input type="checkbox" name="subscribe">
+                    Subscribe news
+                </label>
+            </div>
+
+            <div class="mt-3">
+                <label>
+                    <input type="checkbox" name="accept">
+                    Accept
+                </label>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+    </form><br>
+
+    <!-- ส่วนสำหรับแสดงข้อมูลจาก Form -->
+    <p id="data"></p>
+    </div>
+</body>
+<!-- ส่วนสำหรับแสดงข้อมูลจาก Form -->
+<script>
+    let form = document.getElementById('form');
+    form.addEventListener('submit', (event) => {
+        // console.log(form.elements['name'].value)
+        document.getElementById("data").innerHTML =
+            form.elements['prename'].value + form.elements['fname'].value + " " + form.elements['lname'].value + "<br>เกิดวันที่ " +
+            form.elements['dob'].value + " อายุ " + form.elements['age'].value + "ปี อยู่ปี " + form.elements['year'].value + "<br>" +
+            "Subscribe=" + form.elements['subscribe'].checked + "<br>" + "Accept=" + form.elements['accept'].checked
+        event.preventDefault();
+        return 0;
+    });
+</script>
+
+</html>
