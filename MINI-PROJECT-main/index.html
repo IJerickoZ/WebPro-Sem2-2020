@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,112 +10,149 @@
     <script src="/js/all.js"></script>
     <script src="/js/vue.js"></script>
     <title>My ToDo List</title>
-  </head>
-  <body>
+    <style>
+        .line {
+            text-decoration: line-through
+        }
+    </style>
+</head>
+
+<body>
     <section class="hero">
-      <div class="hero-body">
-        <p class="title">My ToDo List</p>
-        <!-- <p class="subtitle">Hero subtitle</p> -->
-      </div>
+        <div class="hero-body">
+            <p class="title">My ToDo List</p>
+            <!-- <p class="subtitle">Hero subtitle</p> -->
+        </div>
     </section>
     <section id="app">
-      <div class="container">
-        <p class="subtitle my-2">Completed: xx Tasks</p>
-        <p class="subtitle my-2">Incomplete: xx Tasks</p>
-        <div class="columns">
-          <div class="column is-8">
-            <div class="box level py-3 my-2" v-for='label in task'>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" v-on:click='lineT(label.id)'/>
-                  {{label.name}}
-                </label>
-              </div>
-              <div class="level-right">
-                <span class="icon is-small">
-                  <i class="fas fa-edit"></i>
-                </span>
-                <span class="icon is-small ml-5">
-                  <i class="fas fa-trash-alt"></i>
-                </span>
-              </div>
-            </div>
-            <div class="columns mt-5">
-              <div class="column is-8">
-                <div class="field">
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Task Name" v-model='taskName'/>
-                  </div>
+        <div class="container">
+            <p class="subtitle my-2">Completed: xx Tasks</p>
+            <p class="subtitle my-2">Incomplete: xx Tasks</p>
+            <div class="columns">
+                <div class="column is-8">
+                    <div class="box level py-3 my-2" v-for='label in task'>
+                        <div class="control">
+                            <label class="checkbox">
+                                <input type="checkbox" v-model='label.isComplete' />
+                                <span :class="{ 'line': label.isComplete}">{{label.name}}</span>
+                            </label>
+                        </div>
+                        <div class="level-right">
+                            <span class="icon is-small" v-on:click='openEditTask(label)'>
+                                <i class="fas fa-edit"></i>
+                            </span>
+                            <!--Modal-->
+                            <div class="modal" :class="{'is-active' : modal1}">
+                                <div class="modal-background"></div>
+                                <div class="modal-card">
+                                    <header class="modal-card-head">
+                                        <p class="modal-card-title">Edit Task</p>
+                                        <button class="delete" aria-label="close" v-on:click='modal1 = false'></button>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <!-- Content ... -->
+                                        <input class="input" type="text" placeholder="New Task Name" v-model='newTaskName' />
+                                    </section>
+                                    <footer class="modal-card-foot">
+                                        <button class="button is-success" v-on:click='editTask(label)'>Save</button>
+                                        <button class="button" v-on:click='modal1 = false'>Cancel</button>
+                                    </footer>
+                                </div>
+                            </div>
+                            <span class="icon is-small ml-5">
+                                <i class="fas fa-trash-alt"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="columns mt-5">
+                        <div class="column is-8">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="text" placeholder="Task Name" v-model='taskName' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <p class="control">
+                                <a class="button is-info" v-on:click='addTask'> Add New Task </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="column is-4">
-                <p class="control">
-                  <a class="button is-info" v-on:click='addTask'> Add New Task </a>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="column is-4">
-            <div class="card">
-              <header class="card-header has-background-primary">
-                <p class="card-header-title">Sort & Filter</p>
-                <p class="card-header-icon">
-                  <span class="card-header-icon icon">
-                    <i class="fas fa-filter"></i>
-                  </span>
-                </p>
-              </header>
-              <div class="card-content">
-                <div class="content">
-                  <div class="control">
-                    <label class="checkbox">
-                      <input type="checkbox" />
-                      Hide completed tasks
-                    </label>
-                  </div>
-                  <div class="control">
-                    <label class="checkbox">
-                      <input type="checkbox" />
-                      Sort incomplete tasks first
-                    </label>
-                  </div>
+                <div class="column is-4">
+                    <div class="card">
+                        <header class="card-header has-background-primary">
+                            <p class="card-header-title">Sort & Filter</p>
+                            <p class="card-header-icon">
+                                <span class="card-header-icon icon">
+                                    <i class="fas fa-filter" data-target='modal'></i>
+                                </span>
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" />
+                                            Hide completed tasks
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" />
+                                            Sort incomplete tasks first
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+
     </section>
+
+
     <script>
-      var app = new Vue({
-        el: "#app",
-        data: {
-          task: [],
-          toDoList: [],
-          taskIDCount: 1,
-          taskName: '',
-        },
-        methods: {
-          addTask(){
-            namee = this.taskName
-            this.task.push({
-              id: this.taskIDCount,
-              name: namee,
-              isComplete: false,
-              // listID: this.toDoListCount
-            })
-            this.taskIDCount++
-          },
-          lineT(id){
-            console.log(id)
-            for(let i = 0; i < this.task.length; i++){
-              if(id === this.task[i].id){
-                this.task[i].isComplete = !this.task[i].isComplete
-              }
-            }
-          }
-        }
-      });
+        var app = new Vue({
+            el: "#app",
+            data: {
+                task: [],
+                toDoList: [],
+                taskIDCount: 1,
+                toDoListCount: 1,
+                taskName: '',
+                newTaskName: '',
+                modal1: false
+            },
+            methods: {
+                addTask() {
+                    namee = this.taskName
+                    if (this.taskName != '' && this.taskName != null) {
+                        this.task.push({
+                            id: this.taskIDCount,
+                            name: namee,
+                            isComplete: false
+                                // listID: this.toDoListCount
+                        })
+                        this.taskIDCount++;
+                        this.taskName = ''
+                    } else {
+                        alert("ห้ามเว้นว่าง")
+                    }
+
+                },
+                openEditTask(label) {
+                    this.modal1 = true
+                    this.newTaskName = label.name
+                },
+                editTask(label) {
+                    label.name = this.newTaskName
+                    this.modal1 = false
+                }
+            },
+        });
     </script>
-  </body>
+</body>
+
 </html>
