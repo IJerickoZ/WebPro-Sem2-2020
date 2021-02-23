@@ -41,7 +41,7 @@
                             <span class="icon is-small" v-on:click='openEditTask(label)'>
                                 <i class="fas fa-edit"></i>
                             </span>
-                            <!--Modal-->
+                            <!--Modal edit-->
                             <div class="modal" :class="{'is-active' : modal1}">
                                 <div class="modal-background"></div>
                                 <div class="modal-card">
@@ -59,9 +59,27 @@
                                     </footer>
                                 </div>
                             </div>
-                            <span class="icon is-small ml-5">
+                            <span class="icon is-small ml-5" v-on:click='openDeleteTask(label)'>
                                 <i class="fas fa-trash-alt"></i>
                             </span>
+                            <!--Modal delete-->
+                            <div class="modal" :class="{'is-active' : modal2}">
+                                <div class="modal-background"></div>
+                                <div class="modal-card">
+                                    <header class="modal-card-head">
+                                        <p class="modal-card-title">Delete Task</p>
+                                        <button class="delete" aria-label="close" v-on:click='modal2 = false'></button>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <!-- Content ... -->
+                                        <span>คุณต้องการลบ Task {{newTaskName}} ใช่หรือไม่?</span>
+                                    </section>
+                                    <footer class="modal-card-foot">
+                                        <button class="button is-danger" v-on:click='deleteTask(label)'>Confirm</button>
+                                        <button class="button" v-on:click='modal2 = false'>Cancel</button>
+                                    </footer>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="columns mt-5">
@@ -119,23 +137,24 @@
             data: {
                 task: [],
                 toDoList: [],
-                taskIDCount: 1,
+                taskIDCount: 0,
                 toDoListCount: 1,
                 taskName: '',
                 newTaskName: '',
-                modal1: false
+                modal1: false,
+                modal2: false,
+                editID: 0,
             },
             methods: {
                 addTask() {
                     namee = this.taskName
                     if (this.taskName != '' && this.taskName != null) {
                         this.task.push({
-                            id: this.taskIDCount,
+                            id: this.task.length + 1,
                             name: namee,
                             isComplete: false
                                 // listID: this.toDoListCount
                         })
-                        this.taskIDCount++;
                         this.taskName = ''
                     } else {
                         alert("ห้ามเว้นว่าง")
@@ -149,7 +168,26 @@
                 editTask(label) {
                     label.name = this.newTaskName
                     this.modal1 = false
-                }
+                },
+                openDeleteTask(label) {
+                    this.modal2 = true
+
+                    function find(val) {
+                        return val.id == label.id
+                    }
+                    let selectTask = this.task.filter(find)[0]
+                    this.newTaskName = selectTask.name
+                    this.editID = selectTask.id
+                },
+                deleteTask(label) {
+                    let selectTask = this.task.filter((val) => {
+                        return val.id == this.editID
+                    })[0]
+                    let index = this.task.indexOf(selectTask)
+                    console.log(index)
+                    this.task.splice(index, 1)
+                    this.modal2 = false
+                },
             },
         });
     </script>
