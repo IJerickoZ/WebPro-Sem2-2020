@@ -1,4 +1,4 @@
-# ToDo List App 2.0
+# ToDo List App 2.0 
 ### 1. เพิ่มรายละเอียดสำหรับ Task โดยเพิ่ม field ข้อมูลดังนี้:
 - Due date เป็น date picker
   - เพื่อเลือกกำหนดวันเสร็จงาน
