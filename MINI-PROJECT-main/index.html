@@ -165,10 +165,19 @@
                 },
                 openEditTask(label) {
                     this.modal1 = true
-                    this.newTaskName = label.name
+
+                    function find(val) {
+                        return val.id == label.id
+                    }
+                    let selectTask = this.task.filter(find)[0]
+                    this.newTaskName = selectTask.name
+                    this.editID = selectTask.id
                 },
                 editTask(label) {
-                    label.name = this.newTaskName
+                    let selectTask = this.task.filter((val) => {
+                        return val.id == this.editID
+                    })[0]
+                    selectTask.name = this.newTaskName
                     this.modal1 = false
                 },
                 openDeleteTask(label) {
