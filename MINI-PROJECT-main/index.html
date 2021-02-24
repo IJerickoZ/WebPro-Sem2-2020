@@ -14,6 +14,51 @@
         .line {
             text-decoration: line-through
         }
+        
+        input[type=radio] {
+            display: none;
+            outline: none;
+        }
+        
+        .button {
+            cursor: pointer;
+            margin: 5px;
+            border-color: #00000000;
+            background-color: #00000000;
+        }
+        /* .button span {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            padding: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        } */
+        
+        .layer {
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: transparent;
+            z-index: -1;
+        }
+        
+        .black input:checked~.button {
+            border: 3px solid black;
+        }
+        
+        .red input:checked~.button {
+            border: 3px solid black;
+        }
+        
+        .green input:checked~.button {
+            border: 3px solid black;
+        }
     </style>
 </head>
 
@@ -28,19 +73,21 @@
         <div class="container">
             <p class="subtitle my-2">Completed: {{complete}} Tasks</p>
             <p class="subtitle my-2">Incomplete: {{task.length - complete}} Tasks</p>
+            <p class="subtitle my-2">Flagged: {{flagCount}} Tasks</p>
             <div class="columns">
                 <div class="column is-8">
                     <div class="box level py-3 my-2" v-for='label in task'>
                         <div class="control">
                             <label class="checkbox">
                                 <input type="checkbox" v-model='label.isComplete' />
-                                <span :class="{ 'line': label.isComplete}">{{label.name}}</span>
+                                <span :class="{ 'line': label.isComplete}" :style='{color: label.color}'>{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
                             </label>
                         </div>
                         <div class="level-right">
                             <span class="icon is-small" v-on:click='openEditTask(label)'>
                                 <i class="fas fa-edit"></i>
                             </span>
+
                             <!--Modal edit-->
                             <div class="modal" :class="{'is-active' : modal1}">
                                 <div class="modal-background"></div>
@@ -52,6 +99,34 @@
                                     <section class="modal-card-body">
                                         <!-- Content ... -->
                                         <input class="input" type="text" placeholder="New Task Name" v-model='newTaskName' />
+                                        <input class="input" type="date" v-model='newDate' />
+                                        <div class='columns'>
+                                            <div class="column is-12">
+                                                <div class="field">
+                                                    <div class="control">
+                                                        <label class="checkbox">
+                                                            <input type="checkbox" style='width: 20px;height: 20px;margin-top: 10%;' v-model='label.flag'>
+                                                            Flag
+                                                        </label>
+                                                        <label class="black">
+                                                            <input type="radio" name="color2" value="black" v-model='label.color'>
+                                                            <div class="layer"></div>
+                                                            <div class="button" style="background-color: black;"><span></span></div>
+                                                        </label>
+                                                        <label class="red">
+                                                            <input type="radio" name="color2" value="red" v-model='label.color'>
+                                                            <div class="layer"></div>
+                                                            <div class="button" style="background-color: red;"><span></span></div>
+                                                        </label>
+                                                        <label class="green">
+                                                            <input type="radio" name="color2" value="green" v-model='label.color'>
+                                                            <div class="layer"></div>
+                                                            <div class="button" style="background-color: green;"><span></span></div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </section>
                                     <footer class="modal-card-foot">
                                         <button class="button is-success" v-on:click='editTask(label)'>Save</button>
@@ -62,6 +137,7 @@
                             <span class="icon is-small ml-5" v-on:click='openDeleteTask(label)'>
                                 <i class="fas fa-trash-alt"></i>
                             </span>
+
                             <!--Modal delete-->
                             <div class="modal" :class="{'is-active' : modal2}">
                                 <div class="modal-background"></div>
@@ -83,16 +159,48 @@
                         </div>
                     </div>
                     <div class="columns mt-5">
-                        <div class="column is-8">
+                        <div class="column is-3">
                             <div class="field">
                                 <div class="control">
                                     <input class="input" type="text" placeholder="Task Name" v-model='taskName' />
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-3">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="date" v-model='date' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" style='width: 20px;height: 20px;margin-top: 10%;' v-model='flag'>
+                                        Flag
+                                    </label>
+                                    <label class="black">
+                                        <input type="radio" name="color" value="black" v-model='color' checked>
+                                        <div class="layer"></div>
+                                        <div class="button" style="background-color: black;"><span></span></div>
+                                    </label>
+                                    <label class="red">
+                                        <input type="radio" name="color" value="red" v-model='color'>
+                                        <div class="layer"></div>
+                                        <div class="button" style="background-color: red;"><span></span></div>
+                                    </label>
+                                    <label class="green">
+                                        <input type="radio" name="color" value="green" v-model='color'>
+                                        <div class="layer"></div>
+                                        <div class="button" style="background-color: green;"><span></span></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-3">
                             <p class="control">
-                                <a class="button is-info" v-on:click='addTask'> Add New Task </a>
+                                <button class="button is-info" v-on:click='addTask'> Add New Task </button>
                             </p>
                         </div>
                     </div>
@@ -118,7 +226,7 @@
                                 <div class="control">
                                     <label class="checkbox">
                                         <input type="checkbox" />
-                                            Sort incomplete tasks first
+                                            Show only flagged tasks
                                     </label>
                                 </div>
                             </div>
@@ -138,14 +246,19 @@
                 task: [],
                 toDoList: [],
                 taskIDCount: 0,
-                toDoListCount: 1,
+                toDoListCount: 0,
                 taskName: '',
                 newTaskName: '',
+                newDate: '',
                 modal1: false,
                 modal2: false,
                 editID: 0,
                 completed: 0,
-                inComplete: 0
+                inComplete: 0,
+                color: 'black',
+                flag: false,
+                date: '',
+                icon: '<i class="fa fa-flag" aria-hidden="true"></i>'
             },
             methods: {
                 addTask() {
@@ -154,10 +267,15 @@
                         this.task.push({
                             id: this.task.length + 1,
                             name: namee,
-                            isComplete: false
-                                // listID: this.toDoListCount
+                            isComplete: false,
+                            color: this.color,
+                            flag: this.flag,
+                            date: this.date,
+                            listID: this.toDoListCount + 1
                         })
                         this.taskName = ''
+                        this.date = ''
+                        this.flag = false
                     } else {
                         alert("ห้ามเว้นว่าง")
                     }
@@ -171,6 +289,7 @@
                     }
                     let selectTask = this.task.filter(find)[0]
                     this.newTaskName = selectTask.name
+                    this.newDate = selectTask.date
                     this.editID = selectTask.id
                 },
                 editTask(label) {
@@ -178,6 +297,7 @@
                         return val.id == this.editID
                     })[0]
                     selectTask.name = this.newTaskName
+                    selectTask.date = this.newDate
                     this.modal1 = false
                 },
                 openDeleteTask(label) {
@@ -210,6 +330,15 @@
                     }
                     return count
                 },
+                flagCount() {
+                    let count = 0
+                    for (let i = 0; i < this.task.length; i++) {
+                        if (this.task[i].flag === true) {
+                            count++;
+                        }
+                    }
+                    return count
+                }
             }
         });
     </script>
