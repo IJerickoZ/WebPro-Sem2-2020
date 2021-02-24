@@ -35,15 +35,15 @@ style="text-decoration: line-through;"
 
 # ToDo List App 2.0
 ### 1. เพิ่มรายละเอียดสำหรับ Task โดยเพิ่ม field ข้อมูลดังนี้:
-- Due date เป็น date picker
-  - เพื่อเลือกกำหนดวันเสร็จงาน
-  - แสดงผลใน ToDo list เป็น (due by yyyy-mm-dd) 
-- Flag เป็น checkbox
-  - เพื่อระบุว่า task นี้เป็นงานสำคัญ
-  - แสดงผลใน ToDo list เป็น icon รูปธงตามหลังชื่อ task ดังรูป 
-- Color เป็นปุ่ม icon 3 ปุ่ม
-  - เพื่อเลือกสีของ task โดยจะมีให้เลือก 3 สีได้แก่ ดำ (เลือกโดย default) แดง เขียว
-  - แสดงผลสีของชื่อ task ตามกำหนด
+- Due date เป็น date picker ✔️
+  - เพื่อเลือกกำหนดวันเสร็จงาน ✔️
+  - แสดงผลใน ToDo list เป็น (due by yyyy-mm-dd) ✔️
+- Flag เป็น checkbox ✔️
+  - เพื่อระบุว่า task นี้เป็นงานสำคัญ ✔️
+  - แสดงผลใน ToDo list เป็น icon รูปธงตามหลังชื่อ task ดังรูป ✔️
+- Color เป็นปุ่ม icon 3 ปุ่ม ✔️
+  - เพื่อเลือกสีของ task โดยจะมีให้เลือก 3 สีได้แก่ ดำ (เลือกโดย default) แดง เขียว ✔️
+  - แสดงผลสีของชื่อ task ตามกำหนด ✔️
 
 #### แก้ไข 2 ส่วนหลัก ๆ ได้แแก่ 
 1. Form - add task (5 คะแนน) ✔️
