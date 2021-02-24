@@ -63,97 +63,165 @@
 </head>
 
 <body>
-    <section class="hero">
-        <div class="hero-body">
-            <p class="title">My ToDo List</p>
-            <!-- <p class="subtitle">Hero subtitle</p> -->
-        </div>
-    </section>
     <section id="app">
+        <div class="hero-body">
+            <p class="title">My ToDo List <a v-on:click='modal3 = true'><i class="fa fa-plus-circle" aria-hidden="true"></i></a></p>
+            <!--Modal Add Task-->
+            <div class="modal" :class="{'is-active' : modal3}">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Add ToDoList</p>
+                        <button class="delete" aria-label="close" v-on:click='modal3 = false'></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <!-- Content ... -->
+                        <input class="input" type="text" placeholder="New ToDoList Name" v-model='newToDoList' />
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-success" v-on:click='addToDoList'>Confirm</button>
+                        <button class="button" v-on:click='modal3 = false'>Cancel</button>
+                    </footer>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <p class="subtitle my-2">Completed: {{complete}} Tasks</p>
             <p class="subtitle my-2">Incomplete: {{task.length - complete}} Tasks</p>
             <p class="subtitle my-2">Flagged: {{flagCount}} Tasks</p>
             <div class="columns">
                 <div class="column is-8">
-                    <div class="box level py-3 my-2" v-for='label in task'>
-                        <div class="control">
-                            <label class="checkbox">
-                                <input type="checkbox" v-model='label.isComplete' />
-                                <span :class="{ 'line': label.isComplete}" :style='{color: label.color}'>{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
-                            </label>
-                        </div>
-                        <div class="level-right">
-                            <span class="icon is-small" v-on:click='openEditTask(label)'>
+                    <div v-for='todo in toDoList'>
+                        <span><strong style="font-size: 32px;">{{todo.name}} </strong></span>
+                        <span class="icon is-small" v-on:click='openEditToDo(todo)'>
                                 <i class="fas fa-edit"></i>
                             </span>
+                        <!--Modal Edit todolist-->
+                        <div class="modal" :class="{'is-active' : modal4}">
+                            <div class="modal-background"></div>
+                            <div class="modal-card">
+                                <header class="modal-card-head">
+                                    <p class="modal-card-title">Edit Task</p>
+                                    <button class="delete" aria-label="close" v-on:click='modal4 = false'></button>
+                                </header>
+                                <section class="modal-card-body">
+                                    <!-- Content ... -->
+                                    <input class="input" type="text" placeholder="New List Name" v-model='newToDoList' />
+                                </section>
+                                <footer class="modal-card-foot">
+                                    <button class="button is-success" v-on:click='editToDo(todo)'>Save</button>
+                                    <button class="button" v-on:click='modal4 = false'>Cancel</button>
+                                </footer>
+                            </div>
+                        </div>
 
-                            <!--Modal edit-->
-                            <div class="modal" :class="{'is-active' : modal1}">
-                                <div class="modal-background"></div>
-                                <div class="modal-card">
-                                    <header class="modal-card-head">
-                                        <p class="modal-card-title">Edit Task</p>
-                                        <button class="delete" aria-label="close" v-on:click='modal1 = false'></button>
-                                    </header>
-                                    <section class="modal-card-body">
-                                        <!-- Content ... -->
-                                        <input class="input" type="text" placeholder="New Task Name" v-model='newTaskName' />
-                                        <input class="input" type="date" v-model='newDate' />
-                                        <div class='columns'>
-                                            <div class="column is-12">
-                                                <div class="field">
-                                                    <div class="control">
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" style='width: 20px;height: 20px;margin-top: 10%;' v-model='label.flag'>
+
+                        <span class="icon is-small ml-5" v-on:click='openDeleteToDo(todo)'>
+                                <i class="fas fa-trash-alt"></i>
+                            </span>
+                        <!--Modal Delete todolist-->
+                        <!--Modal delete-->
+                        <div class="modal" :class="{'is-active' : modal5}">
+                            <div class="modal-background"></div>
+                            <div class="modal-card">
+                                <header class="modal-card-head">
+                                    <p class="modal-card-title">Delete Task</p>
+                                    <button class="delete" aria-label="close" v-on:click='modal5 = false'></button>
+                                </header>
+                                <section class="modal-card-body">
+                                    <!-- Content ... -->
+                                    <span>คุณต้องการลบ Task {{newToDoList}} ใช่หรือไม่?</span>
+                                </section>
+                                <footer class="modal-card-foot">
+                                    <button class="button is-danger" v-on:click='deleteToDo(todo)'>Confirm</button>
+                                    <button class="button" v-on:click='modal5 = false'>Cancel</button>
+                                </footer>
+                            </div>
+                        </div>
+                        <div class="box level py-3 my-2" v-for='label in task' v-if='label.listName === todo.name'>
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" v-model='label.isComplete' />
+                                    <span :class="{ 'line': label.isComplete}" :style='{color: label.color}' >{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
+                        </label>
+                            </div>
+                            <div class="level-right">
+                                <span class="icon is-small" v-on:click='openEditTask(label)'>
+                                <i class="fas fa-edit"></i>
+                                </span>
+
+                                <!--Modal edit-->
+                                <div class="modal" :class="{'is-active' : modal1}">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+                                        <header class="modal-card-head">
+                                            <p class="modal-card-title">Edit Task</p>
+                                            <button class="delete" aria-label="close" v-on:click='modal1 = false'></button>
+                                        </header>
+                                        <section class="modal-card-body">
+                                            <!-- Content ... -->
+                                            <input class="input" type="text" placeholder="New Task Name" v-model='newTaskName' />
+                                            <input class="input" type="date" v-model='newDate' />
+                                            <div class='columns'>
+                                                <div class="column is-12">
+                                                    <div class="field">
+                                                        <div class="control">
+                                                            <label class="checkbox">
+                                                            <input type="checkbox" style='width: 20px;height: 20px;margin-top: 10%;' v-model='newFlag'>
                                                             Flag
                                                         </label>
-                                                        <label class="black">
-                                                            <input type="radio" name="color2" value="black" v-model='label.color'>
+                                                            <label class="black">
+                                                            <input type="radio" name="color2" value="black" v-model='newColor'>
                                                             <div class="layer"></div>
                                                             <div class="button" style="background-color: black;"><span></span></div>
                                                         </label>
-                                                        <label class="red">
-                                                            <input type="radio" name="color2" value="red" v-model='label.color'>
+                                                            <label class="red">
+                                                            <input type="radio" name="color2" value="red" v-model='newColor'>
                                                             <div class="layer"></div>
                                                             <div class="button" style="background-color: red;"><span></span></div>
                                                         </label>
-                                                        <label class="green">
-                                                            <input type="radio" name="color2" value="green" v-model='label.color'>
+                                                            <label class="green">
+                                                            <input type="radio" name="color2" value="green" v-model='newColor'>
                                                             <div class="layer"></div>
                                                             <div class="button" style="background-color: green;"><span></span></div>
                                                         </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="select" style="width: 100%;">
+                                                        <select v-model='newSelectList' style="width: 100%;">
+                                                            <option v-for='list in toDoList'>{{list.name}}</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </section>
-                                    <footer class="modal-card-foot">
-                                        <button class="button is-success" v-on:click='editTask(label)'>Save</button>
-                                        <button class="button" v-on:click='modal1 = false'>Cancel</button>
-                                    </footer>
+                                        </section>
+                                        <footer class="modal-card-foot">
+                                            <button class="button is-success" v-on:click='editTask(label)'>Save</button>
+                                            <button class="button" v-on:click='modal1 = false'>Cancel</button>
+                                        </footer>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="icon is-small ml-5" v-on:click='openDeleteTask(label)'>
+                                <span class="icon is-small ml-5" v-on:click='openDeleteTask(label)'>
                                 <i class="fas fa-trash-alt"></i>
                             </span>
 
-                            <!--Modal delete-->
-                            <div class="modal" :class="{'is-active' : modal2}">
-                                <div class="modal-background"></div>
-                                <div class="modal-card">
-                                    <header class="modal-card-head">
-                                        <p class="modal-card-title">Delete Task</p>
-                                        <button class="delete" aria-label="close" v-on:click='modal2 = false'></button>
-                                    </header>
-                                    <section class="modal-card-body">
-                                        <!-- Content ... -->
-                                        <span>คุณต้องการลบ Task {{newTaskName}} ใช่หรือไม่?</span>
-                                    </section>
-                                    <footer class="modal-card-foot">
-                                        <button class="button is-danger" v-on:click='deleteTask(label)'>Confirm</button>
-                                        <button class="button" v-on:click='modal2 = false'>Cancel</button>
-                                    </footer>
+                                <!--Modal delete-->
+                                <div class="modal" :class="{'is-active' : modal2}">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+                                        <header class="modal-card-head">
+                                            <p class="modal-card-title">Delete Task</p>
+                                            <button class="delete" aria-label="close" v-on:click='modal2 = false'></button>
+                                        </header>
+                                        <section class="modal-card-body">
+                                            <!-- Content ... -->
+                                            <span>คุณต้องการลบ Task {{newTaskName}} ใช่หรือไม่?</span>
+                                        </section>
+                                        <footer class="modal-card-foot">
+                                            <button class="button is-danger" v-on:click='deleteTask(label)'>Confirm</button>
+                                            <button class="button" v-on:click='modal2 = false'>Cancel</button>
+                                        </footer>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -166,11 +234,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-3">
+                        <div class="column is-2">
                             <div class="field">
                                 <div class="control">
                                     <input class="input" type="date" v-model='date' />
                                 </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="select" style="width: 100%;">
+                                <select v-model='selectList' style="width: 100%;">
+                                    <option v-for='list in toDoList'>{{list.name}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="column is-3">
@@ -198,7 +273,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-3">
+                        <div class="column is-2">
                             <p class="control">
                                 <button class="button is-info" v-on:click='addTask'> Add New Task </button>
                             </p>
@@ -208,7 +283,7 @@
                 <div class="column is-4">
                     <div class="card">
                         <header class="card-header has-background-primary">
-                            <p class="card-header-title">Sort & Filter</p>
+                            <p class="card-header-title">Filter</p>
                             <p class="card-header-icon">
                                 <span class="card-header-icon icon">
                                     <i class="fas fa-filter" data-target='modal'></i>
@@ -232,6 +307,44 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card mt-5">
+                        <header class="card-header has-background-primary">
+                            <p class="card-header-title">Sort</p>
+                            <p class="card-header-icon">
+                                <span class="card-header-icon icon">
+                                    <i class="fas fa-filter" data-target='modal'></i>
+                                </span>
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        Sort alphabetically
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        Sort incomplete tasks 
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        Sort flagged task first 
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        Sort by due date (ascending)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -250,35 +363,51 @@
                 taskName: '',
                 newTaskName: '',
                 newDate: '',
+                newToDoList: '',
                 modal1: false,
                 modal2: false,
-                editID: 0,
+                modal3: false,
+                modal4: false,
+                modal5: false,
+                editTaskID: 0,
+                editListID: 0,
                 completed: 0,
                 inComplete: 0,
+                selectList: '',
+                newSelectList: '',
                 color: 'black',
+                newColor: '',
                 flag: false,
+                newFlag: false,
                 date: '',
                 icon: '<i class="fa fa-flag" aria-hidden="true"></i>'
             },
             methods: {
                 addTask() {
                     namee = this.taskName
-                    if (this.taskName != '' && this.taskName != null) {
-                        this.task.push({
-                            id: this.task.length + 1,
-                            name: namee,
-                            isComplete: false,
-                            color: this.color,
-                            flag: this.flag,
-                            date: this.date,
-                            listID: this.toDoListCount + 1
-                        })
-                        this.taskName = ''
-                        this.date = ''
-                        this.flag = false
+                    list = this.selectList
+                    if (this.selectList !== '' && this.selectList !== null) {
+                        if (this.taskName !== '' && this.taskName != null) {
+                            this.task.push({
+                                id: this.task.length + 1,
+                                name: namee,
+                                isComplete: false,
+                                color: this.color,
+                                flag: this.flag,
+                                date: this.date,
+                                listName: list
+                            })
+                            this.taskName = ''
+                            this.date = ''
+                            this.flag = false
+                            this.color = 'black'
+                        } else {
+                            alert("ห้ามเว้นว่าง")
+                        }
                     } else {
-                        alert("ห้ามเว้นว่าง")
+                        alert("กรุณาเลือก List ก่อนกดยืนยัน")
                     }
+
 
                 },
                 openEditTask(label) {
@@ -290,15 +419,27 @@
                     let selectTask = this.task.filter(find)[0]
                     this.newTaskName = selectTask.name
                     this.newDate = selectTask.date
-                    this.editID = selectTask.id
+                    this.newFlag = selectTask.flag
+                    this.editTaskID = selectTask.id
+                    this.newColor = selectTask.color
+                    this.newSelectList = selectTask.listName
+                    console.log(this.flag)
                 },
                 editTask(label) {
                     let selectTask = this.task.filter((val) => {
-                        return val.id == this.editID
+                        return val.id == this.editTaskID
                     })[0]
-                    selectTask.name = this.newTaskName
-                    selectTask.date = this.newDate
-                    this.modal1 = false
+                    if (this.newTaskName !== '' & this.newTaskName !== null) {
+                        selectTask.name = this.newTaskName
+                        selectTask.date = this.newDate
+                        selectTask.flag = this.newFlag
+                        selectTask.color = this.newColor
+                        selectTask.listName = this.newSelectList
+                        this.modal1 = false
+                    } else {
+                        alert("ห้ามเว้นว่าง")
+                    }
+
                 },
                 openDeleteTask(label) {
                     this.modal2 = true
@@ -308,16 +449,65 @@
                     }
                     let selectTask = this.task.filter(find)[0]
                     this.newTaskName = selectTask.name
-                    this.editID = selectTask.id
+                    this.editTaskID = selectTask.id
                 },
                 deleteTask(label) {
                     let selectTask = this.task.filter((val) => {
-                        return val.id == this.editID
+                        return val.id == this.editTaskID
                     })[0]
                     let index = this.task.indexOf(selectTask)
                     console.log(index)
                     this.task.splice(index, 1)
                     this.modal2 = false
+                },
+                addToDoList() {
+                    if (this.newToDoList !== '' && this.newToDoList !== null) {
+                        this.toDoList.push({
+                            id: this.toDoListCount += 1,
+                            name: this.newToDoList
+                        })
+                        this.newToDoList = ''
+                        this.modal3 = false
+                    } else {
+                        alert('ห้ามเว้นว่าง')
+                    }
+                },
+                openEditToDo(label) {
+                    this.modal4 = true
+
+                    function find(val) {
+                        return val.id === label.id
+                    }
+                    let selectList = this.toDoList.filter(find)[0]
+                    this.newToDoList = selectList.name
+                    this.editListID = selectList.id
+                    console.log(this.editListID)
+                },
+                editToDo(label) {
+                    let selectList = this.toDoList.filter((val) => {
+                        return val.id === this.editListID
+                    })[0]
+                    selectList.name = this.newToDoList
+                    this.modal4 = false
+                },
+                openDeleteToDo(label) {
+                    this.modal5 = true
+
+                    function find(val) {
+                        return val.id == label.id
+                    }
+                    let selectList = this.toDoList.filter(find)[0]
+                    this.newToDoList = selectList.name
+                    this.editListID = selectList.id
+                },
+                deleteToDo(label) {
+                    let count = 0
+                    let selectList = this.toDoList.filter((val) => {
+                        return val.id == this.editListID
+                    })[0]
+                    let indexOfList = this.toDoList.indexOf(selectList)
+                    this.toDoList.splice(indexOfList, 1)
+                    this.modal5 = false
                 },
             },
             computed: {
