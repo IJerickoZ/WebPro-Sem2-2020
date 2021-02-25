@@ -99,7 +99,7 @@ tasks: [
 
 ### 5. เพิ่ม filters และ sorts สำหรับการกรองและเรียงลำดับรายการ task ในแต่ละ list โดยสามารถกรองและเรียงลำดับได้ ตามคำสั่งในข้อ 2-3
 **_หมายเหตุ: กรอง และ เรียงลำดับ แยกแต่ละ ToDo list_**
-- Filter รายการ task แยกแต่ละ list (5 คะแนน)
+- Filter รายการ task แยกแต่ละ list (5 คะแนน) ✔️
 - Sort รายการ task แยกแต่ละ list (5 คะแนน)
 
 ![TODO 2-4](https://github.com/it-web-pro/MINI-PROJECT-2/blob/main/TODO%202-4.png)
