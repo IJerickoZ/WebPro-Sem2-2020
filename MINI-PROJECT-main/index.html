@@ -138,10 +138,10 @@
                                 </footer>
                             </div>
                         </div>
-                        <div class="box level py-3 my-2" v-for='label in task' v-if='hideCompleteAndFlag(label, todo)'>
+                        <div class="box level py-3 my-2" v-for='(label, index) in sortTask' v-if='hideCompleteAndFlag(label, todo)'>
                             <div class="control">
                                 <label class="checkbox">
-                                    <input type="checkbox" v-model='label.isComplete' />
+                                    <input type="checkbox" v-model='label.isComplete' :key="label.name"/>
                                     <span :class="{ 'line': label.isComplete}" :style='{color: label.color}'>{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
                                 </label>
                             </div>
@@ -320,25 +320,25 @@
                             <div class="content">
                                 <div class="control">
                                     <label>
-                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        <input type="radio" name='sort' style="display: inline;" v-model='sortNum' value='1'checked/>
                                         Sort alphabetically
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label>
-                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        <input type="radio" name='sort' style="display: inline;" v-model='sortNum' value='2'/>
                                         Sort incomplete tasks 
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label>
-                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        <input type="radio" name='sort' style="display: inline;" v-model='sortNum' value='3'/>
                                         Sort flagged task first 
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label>
-                                        <input type="radio" name='sort' style="display: inline;"/>
+                                        <input type="radio" name='sort' style="display: inline;" v-model='sortNum' value='4'/>
                                         Sort by due date (ascending)
                                     </label>
                                 </div>
@@ -371,6 +371,7 @@
                 modal5: false,
                 hideComp: false,
                 showFlagOnly: false,
+                sortNum: "1",
                 editTaskID: 0,
                 editListID: 0,
                 completed: 0,
@@ -427,7 +428,6 @@
                     this.editTaskID = selectTask.id
                     this.newColor = selectTask.color
                     this.newSelectList = selectTask.listName
-                    console.log(this.flag)
                 },
                 editTask(label) {
                     let selectTask = this.task.filter((val) => {
@@ -460,7 +460,6 @@
                         return val.id == this.editTaskID
                     })[0]
                     let index = this.task.indexOf(selectTask)
-                    console.log(index)
                     this.task.splice(index, 1)
                     this.modal2 = false
                 },
@@ -476,40 +475,49 @@
                         alert('ห้ามเว้นว่าง')
                     }
                 },
-                openEditToDo(label) {
+                openEditToDo(todo) {
                     this.modal4 = true
 
                     function find(val) {
-                        return val.id === label.id
+                        return val.id === todo.id
                     }
                     let selectList = this.toDoList.filter(find)[0]
                     this.newToDoList = selectList.name
                     this.editListID = selectList.id
-                    console.log(this.editListID)
                 },
-                editToDo(label) {
+                editToDo(todo) {
                     let selectList = this.toDoList.filter((val) => {
                         return val.id === this.editListID
                     })[0]
+                    for(let i = 0 ; i < this.task.length; i++){
+                        if(this.task[i].listName === selectList.name){
+                            this.task[i].listName = this.newToDoList
+                        }
+                    }
                     selectList.name = this.newToDoList
                     this.modal4 = false
                 },
-                openDeleteToDo(label) {
+                openDeleteToDo(todo) {
                     this.modal5 = true
 
                     function find(val) {
-                        return val.id == label.id
+                        return val.id == todo.id
                     }
                     let selectList = this.toDoList.filter(find)[0]
                     this.newToDoList = selectList.name
                     this.editListID = selectList.id
                 },
-                deleteToDo(label) {
+                deleteToDo(todo) {
                     let count = 0
                     let selectList = this.toDoList.filter((val) => {
-                        return val.id == this.editListID
+                        return val.id === this.editListID
                     })[0]
                     let indexOfList = this.toDoList.indexOf(selectList)
+                    // for(let i = 0 ; i < this.task.length; i++){
+                    //     if(this.task[i].listName === this.newToDoList){
+                    //         this.task.splice(i, 1)
+                    //     }
+                    // }
                     this.toDoList.splice(indexOfList, 1)
                     this.modal5 = false
                 },
@@ -524,13 +532,13 @@
                             } else {
                                 return !show
                             }
-                        } else if(this.hideComp === true){
+                        } else if (this.hideComp === true){
                             if(label.isComplete === true){
                                 return show
                             } else {
                                 return !show
                             }
-                        } else if(this.showFlagOnly === true){
+                        } else if (this.showFlagOnly === true){
                             if(label.flag === true){
                                 return !show
                             } else {
@@ -540,7 +548,7 @@
                             return !show
                         }
                     }
-                },
+                }
             },
             computed: {
                 complete() {
@@ -561,6 +569,56 @@
                     }
                     return count
                 },
+                sortTask(){
+                    function compare(a, b) {
+                        if (a.name.toUpperCase() < b.name.toUpperCase())
+                            return -1;
+                        else if (a.name.toUpperCase() > b.name.toUpperCase())
+                            return 1;
+                        return 0
+                    }
+                    function compare2(a, b) {
+                        if(a.isComplete === b.isComplete){
+                            return 0
+                        } else if (a.isComplete > b.isComplete){
+                            return 1
+                        } else if (a.isComplete < b.isComplete){
+                            return -1
+                        }
+                    }
+                    function compare3(a, b) {
+                        if(a.flag === b.flag){
+                            return 0
+                        } else if (a.flag > b.flag){
+                            return -1
+                        } else if (a.flag < b.flag){
+                            return 1
+                        }
+                    }
+                    function compare4(a, b) {
+                        if (a.date < b.date && a.date !== '' && b.date !== ''){
+                            return -1
+                        } else if (a.date > b.date && a.date !== '' && b.date !== ''){
+                            return 1
+                        } else if ( a.date === ''){
+                            return 1
+                        } else if(b.date === ''){
+                            return -1
+                        }
+                    }
+                    if (this.sortNum === '1'){
+                         return this.task.sort(compare);
+                    }
+                    if (this.sortNum === '2'){
+                         return this.task.sort(compare2)
+                    }
+                    if (this.sortNum === '3'){
+                         return this.task.sort(compare3)
+                    }
+                    if (this.sortNum === '4'){
+                         return this.task.sort(compare4)
+                    }
+                }
             },
         });
     </script>
