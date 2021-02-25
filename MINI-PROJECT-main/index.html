@@ -138,12 +138,12 @@
                                 </footer>
                             </div>
                         </div>
-                        <div class="box level py-3 my-2" v-for='label in task' v-if='label.listName === todo.name'>
+                        <div class="box level py-3 my-2" v-for='label in task' v-if='hideCompleteAndFlag(label, todo)'>
                             <div class="control">
                                 <label class="checkbox">
                                     <input type="checkbox" v-model='label.isComplete' />
-                                    <span :class="{ 'line': label.isComplete}" :style='{color: label.color}' >{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
-                        </label>
+                                    <span :class="{ 'line': label.isComplete}" :style='{color: label.color}'>{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
+                                </label>
                             </div>
                             <div class="level-right">
                                 <span class="icon is-small" v-on:click='openEditTask(label)'>
@@ -294,13 +294,13 @@
                             <div class="content">
                                 <div class="control">
                                     <label class="checkbox">
-                                        <input type="checkbox" />
+                                        <input type="checkbox" v-model='hideComp'/>
                                             Hide completed tasks
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label class="checkbox">
-                                        <input type="checkbox" />
+                                        <input type="checkbox" v-model='showFlagOnly'/>
                                             Show only flagged tasks
                                     </label>
                                 </div>
@@ -369,6 +369,8 @@
                 modal3: false,
                 modal4: false,
                 modal5: false,
+                hideComp: false,
+                showFlagOnly: false,
                 editTaskID: 0,
                 editListID: 0,
                 completed: 0,
@@ -386,6 +388,7 @@
                 addTask() {
                     namee = this.taskName
                     list = this.selectList
+                    show = this.showComp
                     if (this.selectList !== '' && this.selectList !== null) {
                         if (this.taskName !== '' && this.taskName != null) {
                             this.task.push({
@@ -395,7 +398,8 @@
                                 color: this.color,
                                 flag: this.flag,
                                 date: this.date,
-                                listName: list
+                                listName: list,
+                                showTask: show 
                             })
                             this.taskName = ''
                             this.date = ''
@@ -509,6 +513,34 @@
                     this.toDoList.splice(indexOfList, 1)
                     this.modal5 = false
                 },
+                hideCompleteAndFlag(label, todo){
+                    let show = false
+                    if(label.listName === todo.name){
+                        if(this.hideComp === true && this.showFlagOnly === true){
+                            if(label.isComplete === true){
+                                return show
+                            } else if (label.flag === false){
+                                return show
+                            } else {
+                                return !show
+                            }
+                        } else if(this.hideComp === true){
+                            if(label.isComplete === true){
+                                return show
+                            } else {
+                                return !show
+                            }
+                        } else if(this.showFlagOnly === true){
+                            if(label.flag === true){
+                                return !show
+                            } else {
+                                return show
+                            }
+                        } else {
+                            return !show
+                        }
+                    }
+                },
             },
             computed: {
                 complete() {
@@ -528,8 +560,8 @@
                         }
                     }
                     return count
-                }
-            }
+                },
+            },
         });
     </script>
 </body>
