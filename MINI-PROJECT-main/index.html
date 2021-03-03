@@ -281,10 +281,10 @@
                     </div>
                 </div>
                 <div class="column is-4">
-                    <div  v-for='(list, index) in sortList' class="mt-5">
+                    <div  v-for='(list, index) in toDoList' class="mt-5">
                     <div class="card">
                         <header class="card-header has-background-primary">
-                            <p class="card-header-title">Filter of {{list.id}}</p>
+                            <p class="card-header-title">Filter of {{list.name}}</p>
                             <p class="card-header-icon">
                                 <span class="card-header-icon icon">
                                     <i class="fas fa-filter" data-target='modal'></i>
@@ -310,7 +310,7 @@
                     </div>
                     <div class="card mt-5">
                         <header class="card-header has-background-primary">
-                            <p class="card-header-title">Sort of {{list.id}}</p>
+                            <p class="card-header-title">Sort of {{list.name}}</p>
                             <p class="card-header-icon">
                                 <span class="card-header-icon icon">
                                     <i class="fas fa-filter" data-target='modal'></i>
@@ -321,25 +321,25 @@
                             <div class="content">
                                 <div class="control">
                                     <label>
-                                        <input type="radio" style="display: inline;" v-model='list.sortNum' :key='list.name' value='1'checked/>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='1'checked/>
                                         Sort alphabetically
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label>
-                                        <input type="radio" style="display: inline;" v-model='list.sortNum' :key='list.name' value='2'/>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='2'/>
                                         Sort incomplete tasks 
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label>
-                                        <input type="radio" style="display: inline;" v-model='list.sortNum' :key='list.name' value='3'/>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='3'/>
                                         Sort flagged task first 
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label>
-                                        <input type="radio" style="display: inline;" v-model='list.sortNum' :key='list.name' value='4'/>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='4'/>
                                         Sort by due date (ascending)
                                     </label>
                                 </div>
@@ -387,6 +387,7 @@
                 newFlag: false,
                 date: '',
                 icon: '<i class="fa fa-flag" aria-hidden="true"></i>',
+                test: []
             },
             methods: {
                 addTask() {
@@ -470,10 +471,7 @@
                     if (this.newToDoList !== '' && this.newToDoList !== null) {
                         this.toDoList.push({
                             id: this.toDoListCount += 1,
-                            name: this.newToDoList
-                        })
-                        this.sortList.push({
-                            id: this.newToDoList,
+                            name: this.newToDoList,
                             hideComp: false,
                             showFlagOnly: false,
                             sortNum: '1'
@@ -515,6 +513,11 @@
                     let selectList = this.toDoList.filter(find)[0]
                     this.newToDoList = selectList.name
                     this.editListID = selectList.id
+                    for(let i = 0 ; i < this.task.length; i++){
+                        if(this.task[i].listName === todo.name){
+                            this.test.push(i)
+                        }
+                    }
                 },
                 deleteToDo(todo) {
                     let count = 0
@@ -522,18 +525,18 @@
                         return val.id === this.editListID
                     })[0]
                     let indexOfList = this.toDoList.indexOf(selectList)
-                    // for(let i = 0 ; i < this.task.length; i++){
-                    //     if(this.task[i].listName === this.newToDoList){
-                    //         this.task.splice(i, 1)
-                    //     }
-                    // }
                     this.toDoList.splice(indexOfList, 1)
+                    for(let j = 0; j < this.test.length; j++){
+                        this.task.splice((this.test[j]-j), 1)
+                    }
+                    this.test = []
+                    this.newToDoList = ''
                     this.modal5 = false
                 },
                 hideCompleteAndFlag(label, todo){
                     let show = false
                     if(label.listName === todo.name){
-                        if(this.sortList[this.toDoList.indexOf(todo)].hideComp === true && this.sortList[this.toDoList.indexOf(todo)].showFlagOnly === true){
+                        if(this.toDoList[this.toDoList.indexOf(todo)].hideComp === true && this.toDoList[this.toDoList.indexOf(todo)].showFlagOnly === true){
                             if(label.isComplete === true){
                                 return show
                             } else if (label.flag === false){
@@ -541,13 +544,13 @@
                             } else {
                                 return !show
                             }
-                        } else if (this.sortList[this.toDoList.indexOf(todo)].hideComp === true){
+                        } else if (this.toDoList[this.toDoList.indexOf(todo)].hideComp === true){
                             if(label.isComplete === true){
                                 return show
                             } else {
                                 return !show
                             }
-                        } else if (this.sortList[this.toDoList.indexOf(todo)].showFlagOnly === true){
+                        } else if (this.toDoList[this.toDoList.indexOf(todo)].showFlagOnly === true){
                             if(label.flag === true){
                                 return !show
                             } else {
