@@ -20,22 +20,14 @@
             outline: none;
         }
         
-        .button {
+        .csize{
             cursor: pointer;
-            margin: 5px;
             border-color: #00000000;
             background-color: #00000000;
-        }
-        /* .button span {
-            position: absolute;
             width: 35px;
             height: 35px;
-            padding: 0;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-        } */
+            margin-top: 2px;
+        }
         
         .layer {
             display: block;
@@ -126,7 +118,7 @@
                             <div class="modal-card">
                                 <header class="modal-card-head">
                                     <p class="modal-card-title">Delete Task</p>
-                                    <button class="delete" aria-label="close" v-on:click='modal5 = false'></button>
+                                    <button class="delete" aria-label="close" v-on:click='modal5 = false, test = []'></button>
                                 </header>
                                 <section class="modal-card-body">
                                     <!-- Content ... -->
@@ -134,14 +126,14 @@
                                 </section>
                                 <footer class="modal-card-foot">
                                     <button class="button is-danger" v-on:click='deleteToDo(todo)'>Confirm</button>
-                                    <button class="button" v-on:click='modal5 = false'>Cancel</button>
+                                    <button class="button" v-on:click='modal5 = false, test = []'>Cancel</button>
                                 </footer>
                             </div>
                         </div>
                         <div class="box level py-3 my-2" v-for='(label, index) in sortTask' v-if='hideCompleteAndFlag(label, todo)'>
                             <div class="control">
                                 <label class="checkbox">
-                                    <input type="checkbox" v-model='label.isComplete' :key="label.name"/>
+                                    <input type="checkbox" v-model='label.isComplete' :key="label.id"/>
                                     <span :class="{ 'line': label.isComplete}" :style='{color: label.color}'>{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
                                 </label>
                             </div>
@@ -161,30 +153,30 @@
                                         <section class="modal-card-body">
                                             <!-- Content ... -->
                                             <input class="input" type="text" placeholder="New Task Name" v-model='newTaskName' />
-                                            <input class="input" type="date" v-model='newDate' />
+                                            <input class="input mt-2" type="date" v-model='newDate' />
                                             <div class='columns'>
                                                 <div class="column is-12">
                                                     <div class="field">
-                                                        <div class="control">
+                                                        <div class="control mt-3">
                                                             <label class="checkbox">
-                                                            <input type="checkbox" style='width: 20px;height: 20px;margin-top: 10%;' v-model='newFlag'>
-                                                            Flag
-                                                        </label>
+                                                                <input type="checkbox" style="width: 35px;height: 35px;margin-top: 2px;vertical-align: -12px;" v-model='newFlag'>
+                                                                <span style="font-weight: bold;">Flag</span>
+                                                            </label>
                                                             <label class="black">
-                                                            <input type="radio" name="color2" value="black" v-model='newColor'>
-                                                            <div class="layer"></div>
-                                                            <div class="button" style="background-color: black;"><span></span></div>
-                                                        </label>
+                                                                <input type="radio" name="color2" value="black" v-model='newColor'>
+                                                                <div class="layer"></div>
+                                                                <div class="button csize" style="background-color: black;"><span></span></div>
+                                                            </label>
                                                             <label class="red">
-                                                            <input type="radio" name="color2" value="red" v-model='newColor'>
-                                                            <div class="layer"></div>
-                                                            <div class="button" style="background-color: red;"><span></span></div>
-                                                        </label>
+                                                                <input type="radio" name="color2" value="red" v-model='newColor'>
+                                                                <div class="layer"></div>
+                                                                <div class="button csize" style="background-color: red;"><span></span></div>
+                                                            </label>
                                                             <label class="green">
-                                                            <input type="radio" name="color2" value="green" v-model='newColor'>
-                                                            <div class="layer"></div>
-                                                            <div class="button" style="background-color: green;"><span></span></div>
-                                                        </label>
+                                                                <input type="radio" name="color2" value="green" v-model='newColor'>
+                                                                <div class="layer"></div>
+                                                                <div class="button csize" style="background-color: green;"><span></span></div>
+                                                            </label>
                                                         </div>
                                                     </div>
                                                     <div class="select" style="width: 100%;">
@@ -249,26 +241,26 @@
                             </div>
                         </div>
                         <div class="column is-3">
-                            <div class="field">
+                            <div class="field mr-0">
                                 <div class="control">
                                     <label class="checkbox">
-                                        <input type="checkbox" style='width: 20px;height: 20px;margin-top: 10%;' v-model='flag'>
-                                        Flag
+                                        <input type="checkbox" style='width: 36px;height: 36px;margin-top: 2px;' v-model='flag'>
+                                        <span style="vertical-align: 12px;font-weight: bold">Flag</span>
                                     </label>
                                     <label class="black">
                                         <input type="radio" name="color" value="black" v-model='color' checked>
                                         <div class="layer"></div>
-                                        <div class="button" style="background-color: black;"><span></span></div>
+                                        <div class="button csize" style="background-color: black;"><span></span></div>
                                     </label>
                                     <label class="red">
                                         <input type="radio" name="color" value="red" v-model='color'>
                                         <div class="layer"></div>
-                                        <div class="button" style="background-color: red;"><span></span></div>
+                                        <div class="button csize" style="background-color: red;"><span></span></div>
                                     </label>
-                                    <label class="green">
+                                    <label class="green" >
                                         <input type="radio" name="color" value="green" v-model='color'>
                                         <div class="layer"></div>
-                                        <div class="button" style="background-color: green;"><span></span></div>
+                                        <div class="button csize" style="background-color: green;"><span></span></div>
                                     </label>
                                 </div>
                             </div>
@@ -295,13 +287,13 @@
                             <div class="content">
                                 <div class="control">
                                     <label class="checkbox">
-                                        <input type="checkbox" v-model='list.hideComp' :key='list.name'/>
+                                        <input type="checkbox" v-model='list.hideComp'/>
                                             Hide completed tasks
                                     </label>
                                 </div>
                                 <div class="control">
                                     <label class="checkbox">
-                                        <input type="checkbox" v-model='list.showFlagOnly' :key='list.name'/>
+                                        <input type="checkbox" v-model='list.showFlagOnly'/>
                                             Show only flagged tasks
                                     </label>
                                 </div>
@@ -411,7 +403,7 @@
                             this.flag = false
                             this.color = 'black'
                         } else {
-                            alert("ห้ามเว้นว่าง")
+                            alert("Task ห้ามเว้นว่าง")
                         }
                     } else {
                         alert("กรุณาเลือก List ก่อนกดยืนยัน")
@@ -445,7 +437,7 @@
                         selectTask.listName = this.newSelectList
                         this.modal1 = false
                     } else {
-                        alert("ห้ามเว้นว่าง")
+                        alert("Task ห้ามเว้นว่าง")
                     }
 
                 },
@@ -496,13 +488,17 @@
                     let selectList = this.toDoList.filter((val) => {
                         return val.id === this.editListID
                     })[0]
-                    for(let i = 0 ; i < this.task.length; i++){
-                        if(this.task[i].listName === selectList.name){
-                            this.task[i].listName = this.newToDoList
+                    if(this.newToDoList === ''){
+                        alert('ห้ามเว้นว่าง')
+                    } else {
+                        for(let i = 0 ; i < this.task.length; i++){
+                            if(this.task[i].listName === selectList.name){
+                                this.task[i].listName = this.newToDoList
+                            }
                         }
+                        selectList.name = this.newToDoList
+                        this.modal4 = false
                     }
-                    selectList.name = this.newToDoList
-                    this.modal4 = false
                 },
                 openDeleteToDo(todo) {
                     this.modal5 = true
