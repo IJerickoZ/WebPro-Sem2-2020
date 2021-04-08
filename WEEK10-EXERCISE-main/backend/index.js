@@ -4,7 +4,7 @@ const path = require("path")
 
 const app = express();
 app.use(cors())
-// Statics
+    // Statics
 app.use(express.static('static'))
 
 app.use(express.json()) // for parsing application/json
@@ -20,5 +20,5 @@ app.use(blogRouter.router)
 app.use(commentRouter.router)
 
 app.listen(3000, () => {
-  console.log(`Example app listening at http://localhost:3000`)
+    console.log(`Example app listening at http://localhost:3000`)
 })

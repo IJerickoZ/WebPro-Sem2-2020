@@ -13,7 +13,7 @@ const routes = [{
         path: '/detail/:id',
         name: 'Detail',
         component: () =>
-            import ('../views/Detail.vue') // set home as path '/'
+            import ('../views/Detail.vue')
     }
 ]
 

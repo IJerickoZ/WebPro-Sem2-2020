@@ -47,29 +47,31 @@ import axios from "axios";
 export default {
   data() {
     return {
-      blogs: null, // add blogs variable
-      like: ''
+      blogs: null, 
+      like: '',
     };
   },
   created() {
-    axios
-      .get("http://localhost:3000/")
-      .then((response) => {
-        this.blogs = response.data;
-        console.log(this.blogs);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+    axios.get("http://localhost:3000/detail/:id")
+        .then((response) => {
+          this.blogs = response.data;
+          console.log(this.blogs)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+},
   methods:{
       addLike(id){
           axios
             .put("http://localhost:3000/blogs/addlike/"+ id)
             .then((response) => {
-                this.like = response.data.like
-                this.blogs[id-1].like = response.data.like
-                console.log(this.like)
+                function findBlogIndex(blog){
+                    return id === blog.id
+                }
+                let blogIndex = this.blogs.findIndex(findBlogIndex)
+                console.log(blogIndex)
+                this.blogs[blogIndex].like = response.data.like
             })
             .catch((err) => {
                 console.log(err);

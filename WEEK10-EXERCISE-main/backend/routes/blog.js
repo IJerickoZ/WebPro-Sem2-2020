@@ -174,28 +174,38 @@ router.post("/blogs", upload.single('myImage'), async function(req, res, next) {
     }
 });
 
-router.get("/blogs/:id", function(req, res, next) {
-    const promise1 = pool.query("SELECT * FROM blogs WHERE id=?", [
-        req.params.id,
-    ]);
-    const promise2 = pool.query("SELECT * FROM comments WHERE blog_id=?", [
-        req.params.id,
-    ]);
 
-    Promise.all([promise1, promise2])
-        .then((results) => {
-            const blogs = results[0];
-            const comments = results[1];
-            res.render("blogs/detail", {
-                blog: blogs[0][0],
-                comments: comments[0],
-                error: null,
-            });
+
+
+
+
+router.get("/detail/:id", async function(req, res, next) {
+    const conn = await pool.getConnection()
+    await conn.beginTransaction();
+    let id = req.params.id
+    try {
+        let result1 = await conn.query('SELECT * FROM blogs WHERE id=?', [id])
+        let result2 = await conn.query('SELECT * FROM comments WHERE blog_id=?', [id])
+        conn.commit()
+        res.json({
+            blog: result1[0][0],
+            comment: result2[0]
         })
-        .catch((err) => {
-            return next(err);
-        });
+    } catch (err) {
+        await conn.rollback();
+        return next(err)
+    } finally {
+        console.log('finally')
+        conn.release();
+    }
 });
+
+
+
+
+
+
+
 
 router.put('/blogs/:id', upload.single('myImage'), async(req, res, next) => {
     const conn = await pool.getConnection()

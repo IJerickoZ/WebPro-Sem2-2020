@@ -3,7 +3,7 @@
                 <section class="hero">
                     <div class="hero-body">
                         <p class="title">
-                            {{blog.title}}
+                            {{blogs.blog.title}}
                         </p>
                     </div>
                 </section>
@@ -37,12 +37,11 @@
                             </div>
                             <div class="card-content">
                                 <div class="content">
-                                    {{blog.content}}
+                                    {{blogs.blog.content}}
                                 </div>
                                 <div class="container">
                                     <p class="subtitle">Comments</p>
-                                    <% for (comment of comments) { %>
-                                        <div class="box">
+                                        <div class="box" v-for="comment in blogs.comment" :key='comment.id'>
                                             <article class="media">
                                                 <div class="media-left">
                                                     <figure class="image is-64x64">
@@ -52,10 +51,10 @@
                                                 <div class="media-content">
                                                     <div class="content">
                                                         <p>
-                                                            <%= comment.comment %>
+                                                            {{comment.comment}}
                                                         </p>
                                                         <p class="is-size-7">
-                                                            <%= comment.comment_date %>
+                                                            {{comment.comment_date}}
                                                         </p>
                                                     </div>
                                                     <nav class="level is-mobile">
@@ -82,22 +81,22 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
     data() {
       return {
-        blog:null
+        blogs:null
       }
     },
     created(){
-        console.log(this.$route.params.id)
-        axios
-        .get("http://localhost:3000/blogs/:id")
+        console.log(this.$route)
+        axios.get("http://localhost:3000/detail/" + this.$route.params.id)
         .then((response) => {
-          this.blog = response.data;
-          console.log(this.blog);
+            this.blogs = response.data;
+            console.log(response.data);
         })
         .catch((err) => {
-          console.log(err);
+            console.log(err);
         });
     }
   }
