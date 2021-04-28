@@ -41,26 +41,49 @@
       <div class="field mt-5">
         <label class="label">Title</label>
         <div class="control">
-          <input v-model="titleBlog" class="input" type="text" placeholder="Text input" />
+          <input v-model="$v.titleBlog.$model" :class="{'is-danger': $v.titleBlog.$error}" class="input" type="text" placeholder="Text input" />
+          <template v-if="$v.titleBlog.$error">
+             <p class="help is-danger" v-if="!$v.titleBlog.required">This field is required</p>
+             <p class="help is-danger" v-if="!$v.titleBlog.minLength">to short (min is 10)</p>
+             <p class="help is-danger" v-if="!$v.titleBlog.maxLength">to long (max is 25)</p>
+             <p class="help is-danger" v-if="!$v.titleBlog.alpha">alphabet only</p>
+        </template>
         </div>
       </div>
 
       <div class="field">
         <label class="label">Content</label>
         <div class="control">
-          <textarea v-model="contentBlog" class="textarea" placeholder="Textarea"></textarea>
+          <textarea v-model="$v.contentBlog.$model" :class="{'is-danger': $v.contentBlog.$error}" class="textarea" placeholder="Textarea"></textarea>
+            <template v-if="$v.contentBlog.$error">
+             <p class="help is-danger" v-if="!$v.contentBlog.required">This field is required</p>
+             <p class="help is-danger" v-if="!$v.contentBlog.minLength">to short (min is 50)</p>
+            </template>
+        </div>
+      </div>
+
+      <div class="field mt-5">
+        <label class="label">ref</label>
+        <div class="control">
+          <input :class="{'is-danger': $v.ref.$error}" class="input" type="text" placeholder="Text input" />
+            <template v-if="$v.ref.$error">
+             <p class="help is-danger" v-if="!$v.ref.url">wrong url format</p>
+            </template>
         </div>
       </div>
 
       <div class="control mb-3">
         <label class="radio">
-          <input v-model="statusBlog" type="radio" name="answer" value="01" />
+          <input v-model="$v.audience.$model" type="radio" name="answer" value="status_private" />
           Private
         </label>
         <label class="radio">
-          <input v-model="statusBlog" type="radio" name="answer" value="02" />
+          <input v-model="$v.audience.$model" type="radio" name="answer" value="status_public" />
           Public
         </label>
+        <template v-if="$v.audience.$error">
+             <p class="help is-danger" v-if="!$v.audience.required">pls select one!</p>
+        </template>
       </div>
 
       <div class="field">
@@ -70,7 +93,38 @@
             Pinned
           </label>
         </div>
-      </div>
+      </div><hr>
+    
+        <!-- <div class="columns">
+            <div class="column is-6">
+                <div class="field mt-5">
+                    <label class="label">วันที่โพสต์</label>
+                    <div class="control">
+                        <input v-model="create_date" :class="{'is-danger': $v.create_date.$error}" class="input" type="date" />
+                        <template v-if="$v.create_date.$error">
+                            <p class="help is-danger" v-if="!$v.create_date.maxValue">start date must be less than end date</p>
+                        </template>
+                        <template v-if="$v.end_date.$error">
+                            <p class="help is-danger" v-if="$v.end_date.requiredIf">require start date</p>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-6">
+                <div class="field mt-5">
+                    <label class="label">วันสิ้นสุด</label>
+                    <div class="control">
+                        <input v-model="end_date" :class="{'is-danger': $v.end_date.$error}" class="input" type="date" />
+                        <template v-if="$v.end_date.$error">
+                            <p class="help is-danger" v-if="!$v.end_date.minValue">end date must more than start date</p>
+                        </template>
+                        <template v-if="$v.create_date.$error">
+                            <p class="help is-danger" v-if="$v.create_date.requiredIf">require end date</p>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div> -->
 
       <div class="field is-grouped">
         <div class="control">
@@ -86,6 +140,7 @@
 
 <script>
 import axios from "axios";
+import { required, alpha, minLength, maxLength, sameAs, url, maxValue, minValue, requiredIf} from 'vuelidate/lib/validators'
 
 export default {
   data() {
@@ -96,7 +151,10 @@ export default {
       titleBlog: "",
       contentBlog: "",
       pinnedBlog: false,
-      statusBlog: "01",
+      audience: "",
+      ref:'',
+      create_date:'',
+      end_date:'',
     };
   },
   methods: {
@@ -113,36 +171,57 @@ export default {
       this.images.splice(index, 1);
     },
     submitBlog() {
-      let formData = new FormData();
-      formData.append("title", this.titleBlog);
-      formData.append("content", this.contentBlog);
-      formData.append("pinned", this.pinnedBlog ? 1 : 0);
-      formData.append("status", "01");
-      this.images.forEach((image) => {
-        formData.append("myImage", image);
-      });
-
-      // Note ***************
-      // ตอนเรายิง Postmant จะใช้ fromData
-      // ตอนยิงหลาย ๆ รูปพร้อมกันใน Postman จะเป็นแบบนี้
-
-      // title   | "This is a title of blog"
-      // comment | "comment in blog"
-      // ...
-      // myImage | [select file 1]
-      // myImage | [select file 2]
-      // myImage | [select file 3]
-
-      // จะสังเกตุว่าใช้ myImage เป็น key เดียวกัน เลยต้องเอามา loop forEach
-      // พอไปฝั่ง backend มันจะจัด file ให้เป็น Array เพื่อเอาไปใช้งานต่อได้
-
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+            let body = {
+                title: this.title,
+                content: this.content,
+                pin: this.pinnedBlog,
+                ref: this.ref,
+                create_date: this.create_date,
+                end_date: this.end_date,
+                audience: this.statusBlog
+            }
       axios
-        .post("http://localhost:3000/blogs", formData)
-        .then((res) => this.$router.push({name: 'home'}))
+        .post("http://localhost:3000/blogs/create", body)
+        .then((res) => {
+            this.$router.push({name: 'home'})
+            console.log(res)
+        })
         .catch((e) => console.log(e.response.data));
-    },
+      }
+    }
   },
-};
+  validations(){
+      return{
+            titleBlog:{
+                required: required,
+                alpha: alpha,
+                minLength: minLength(10),
+                maxLength: maxLength(25)
+            },
+            contentBlog:{
+                required: required,
+                minLength: minLength(50)
+            },
+            audience:{
+                required: required,
+                sameAs: sameAs('status_private', 'status_public')
+            },
+            ref:{
+                url: url
+            },
+            // create_date:{
+            //     required: requiredIf(() => {return this.end_date !== ''}),
+            //     maxValue: maxValue(() => {return this.create_date > this.end_date})
+            // },
+            // end_date:{
+            //     required: requiredIf(() => {return this.create_date !== ''}),
+            //     minValue: minValue(() => {return this.create_date < this.end_date})
+            // }
+      }
+  }
+}
 </script>
 
 <style>
