@@ -103,10 +103,8 @@
                         <input v-model="create_date" :class="{'is-danger': $v.create_date.$error}" class="input" type="date" />
                         <template v-if="$v.create_date.$error">
                             <p class="help is-danger" v-if="!$v.create_date.maxDate">start date must be less than end date</p>
+                            <p class="help is-danger" v-if="!$v.create_date.required">need start date</p>
                         </template>
-                        <!-- <template v-if="$v.create_date.$error">
-                            <p class="help is-danger" v-if="!$v.create_date.maxValue">require start date</p>
-                        </template> -->
                     </div>
                 </div>
             </div>
@@ -117,10 +115,8 @@
                         <input v-model="end_date" :class="{'is-danger': $v.end_date.$error}" class="input" type="date" />
                         <template v-if="$v.end_date.$error">
                             <p class="help is-danger" v-if="!$v.end_date.minDate">end date must more than start date</p>
+                            <p class="help is-danger" v-if="!$v.end_date.required">need end date</p>
                         </template>
-                        <!-- <template v-if="$v.end_date.$error">
-                            <p class="help is-danger" v-if="$v.end_date.minValue">require end date</p>
-                        </template> -->
                     </div>
                 </div>
             </div>
@@ -140,7 +136,7 @@
 
 <script>
 import axios from "axios";
-import { required, alpha, minLength, maxLength, sameAs, url} from 'vuelidate/lib/validators'
+import { required, alpha, minLength, maxLength, sameAs, url, requiredIf} from 'vuelidate/lib/validators'
 
 export default {
   data() {
@@ -183,7 +179,8 @@ export default {
                   } else {
                     return false
                   }
-                }
+                },
+                required: requiredIf(() => this.end_date !== '')
             },
             end_date:{
                 MinDate(value){
@@ -192,7 +189,8 @@ export default {
                   } else {
                     return false
                   }
-                }
+                },
+                required: requiredIf(() => this.create_date !== '')
             }
       }
   },
