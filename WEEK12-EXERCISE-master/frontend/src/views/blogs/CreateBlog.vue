@@ -20,23 +20,23 @@
         multiple
         type="file"
         accept="image/png, image/jpeg, image/webp"
-        @change="selectImages"
+        
       />
 
-      <div v-if="images" class="columns is-multiline">
+      <!-- <div v-if="images" class="columns is-multiline">
         <div v-for="(image, index) in images" :key="image.id" class="column is-one-quarter">
           <div class="card">
             <div class="card-image">
               <figure class="image is-4by3">
-                <img :src="showSelectImage(image)" alt="Placeholder image" />
+                <img  alt="Placeholder image" />
               </figure>
             </div>
             <footer class="card-footer">
-              <a @click="deleteSelectImage(index)" class="card-footer-item has-text-danger">Delete</a>
+              <a  class="card-footer-item has-text-danger">Delete</a>
             </footer>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="field mt-5">
         <label class="label">Title</label>
@@ -65,7 +65,7 @@
       <div class="field mt-5">
         <label class="label">ref</label>
         <div class="control">
-          <input :class="{'is-danger': $v.ref.$error}" class="input" type="text" placeholder="Text input" />
+          <input v-model='ref' :class="{'is-danger': $v.ref.$error}" class="input" type="text" placeholder="Text input" />
             <template v-if="$v.ref.$error">
              <p class="help is-danger" v-if="!$v.ref.url">wrong url format</p>
             </template>
@@ -95,18 +95,18 @@
         </div>
       </div><hr>
     
-        <!-- <div class="columns">
+        <div class="columns">
             <div class="column is-6">
                 <div class="field mt-5">
                     <label class="label">วันที่โพสต์</label>
                     <div class="control">
                         <input v-model="create_date" :class="{'is-danger': $v.create_date.$error}" class="input" type="date" />
                         <template v-if="$v.create_date.$error">
-                            <p class="help is-danger" v-if="!$v.create_date.maxValue">start date must be less than end date</p>
+                            <p class="help is-danger" v-if="!$v.create_date.maxDate">start date must be less than end date</p>
                         </template>
-                        <template v-if="$v.end_date.$error">
-                            <p class="help is-danger" v-if="$v.end_date.requiredIf">require start date</p>
-                        </template>
+                        <!-- <template v-if="$v.create_date.$error">
+                            <p class="help is-danger" v-if="!$v.create_date.maxValue">require start date</p>
+                        </template> -->
                     </div>
                 </div>
             </div>
@@ -116,19 +116,19 @@
                     <div class="control">
                         <input v-model="end_date" :class="{'is-danger': $v.end_date.$error}" class="input" type="date" />
                         <template v-if="$v.end_date.$error">
-                            <p class="help is-danger" v-if="!$v.end_date.minValue">end date must more than start date</p>
+                            <p class="help is-danger" v-if="!$v.end_date.minDate">end date must more than start date</p>
                         </template>
-                        <template v-if="$v.create_date.$error">
-                            <p class="help is-danger" v-if="$v.create_date.requiredIf">require end date</p>
-                        </template>
+                        <!-- <template v-if="$v.end_date.$error">
+                            <p class="help is-danger" v-if="$v.end_date.minValue">require end date</p>
+                        </template> -->
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
 
       <div class="field is-grouped">
         <div class="control">
-          <button @click="submitBlog" class="button is-link">Submit</button>
+          <button class="button is-link" @click="submitBlog">Submit</button>
         </div>
         <div class="control">
           <button @click="$router.go(-1)" class="button is-link is-light">Cancel</button>
@@ -140,7 +140,7 @@
 
 <script>
 import axios from "axios";
-import { required, alpha, minLength, maxLength, sameAs, url, maxValue, minValue, requiredIf} from 'vuelidate/lib/validators'
+import { required, alpha, minLength, maxLength, sameAs, url} from 'vuelidate/lib/validators'
 
 export default {
   data() {
@@ -156,41 +156,6 @@ export default {
       create_date:'',
       end_date:'',
     };
-  },
-  methods: {
-    selectImages(event) {
-      this.images = event.target.files;
-    },
-    showSelectImage(image) {
-      // for preview only
-      return URL.createObjectURL(image);
-    },
-    deleteSelectImage(index) {
-      console.log(this.images);
-      this.images = Array.from(this.images);
-      this.images.splice(index, 1);
-    },
-    submitBlog() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
-            let body = {
-                title: this.title,
-                content: this.content,
-                pin: this.pinnedBlog,
-                ref: this.ref,
-                create_date: this.create_date,
-                end_date: this.end_date,
-                audience: this.statusBlog
-            }
-      axios
-        .post("http://localhost:3000/blogs/create", body)
-        .then((res) => {
-            this.$router.push({name: 'home'})
-            console.log(res)
-        })
-        .catch((e) => console.log(e.response.data));
-      }
-    }
   },
   validations(){
       return{
@@ -211,16 +176,51 @@ export default {
             ref:{
                 url: url
             },
-            // create_date:{
-            //     required: requiredIf(() => {return this.end_date !== ''}),
-            //     maxValue: maxValue(() => {return this.create_date > this.end_date})
-            // },
-            // end_date:{
-            //     required: requiredIf(() => {return this.create_date !== ''}),
-            //     minValue: minValue(() => {return this.create_date < this.end_date})
-            // }
+            create_date:{
+                MaxDate(value){
+                  if(value <= this.end_date){
+                    return true
+                  } else {
+                    return false
+                  }
+                }
+            },
+            end_date:{
+                MinDate(value){
+                  if(value >= this.create_date){
+                    return true
+                  } else {
+                    return false
+                  }
+                }
+            }
       }
-  }
+  },
+  methods: {
+    submitBlog() {
+      console.log(1)
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        console.log(2)
+            let body = {
+                title: this.titleBlog,
+                content: this.contentBlog,
+                pin: this.pinnedBlog,
+                ref: this.ref,
+                create_date: this.create_date,
+                end_date: this.end_date,
+                audience: this.audience
+            }
+        axios
+        .post("http://localhost:3000/blogs/create", body)
+        .then((res) => {
+            console.log(res)
+            this.$router.push({name: 'home'})
+        })
+        .catch((e) => console.log(e.response.data));
+      }
+    }
+  },
 }
 </script>
 
