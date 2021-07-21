@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/all.css" rel="stylesheet" />
+    <link href="/css/bulma.css" rel="stylesheet" />
+    <script src="/js/all.js"></script>
+    <script src="/js/vue.js"></script>
+    <title>My ToDo List</title>
+    <style>
+        .line {
+            text-decoration: line-through
+        }
+        
+        input[type=radio] {
+            display: none;
+            outline: none;
+        }
+        
+        .csize{
+            cursor: pointer;
+            border-color: #00000000;
+            background-color: #00000000;
+            width: 35px;
+            height: 35px;
+            margin-top: 2px;
+        }
+        
+        .layer {
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: transparent;
+            z-index: -1;
+        }
+        
+        .black input:checked~.button {
+            border: 3px solid black;
+        }
+        
+        .red input:checked~.button {
+            border: 3px solid black;
+        }
+        
+        .green input:checked~.button {
+            border: 3px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="app">
+        <div class="hero-body">
+            <p class="title">My ToDo List <a v-on:click='modal3 = true'><i class="fa fa-plus-circle" aria-hidden="true"></i></a></p>
+            <!--Modal Add Task-->
+            <div class="modal" :class="{'is-active' : modal3}">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Add ToDoList</p>
+                        <button class="delete" aria-label="close" v-on:click='modal3 = false'></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <!-- Content ... -->
+                        <input class="input" type="text" placeholder="New ToDoList Name" v-model='newToDoList' />
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-success" v-on:click='addToDoList'>Confirm</button>
+                        <button class="button" v-on:click='modal3 = false'>Cancel</button>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <p class="subtitle my-2">Completed: {{complete}} Tasks</p>
+            <p class="subtitle my-2">Incomplete: {{task.length - complete}} Tasks</p>
+            <p class="subtitle my-2">Flagged: {{flagCount}} Tasks</p>
+            <div class="columns">
+                <div class="column is-8">
+                    <div v-for='todo in toDoList'>
+                        <span><strong style="font-size: 32px;">{{todo.name}} </strong></span>
+                        <span class="icon is-small" v-on:click='openEditToDo(todo)'>
+                                <i class="fas fa-edit"></i>
+                            </span>
+                        <!--Modal Edit todolist-->
+                        <div class="modal" :class="{'is-active' : modal4}">
+                            <div class="modal-background"></div>
+                            <div class="modal-card">
+                                <header class="modal-card-head">
+                                    <p class="modal-card-title">Edit Task</p>
+                                    <button class="delete" aria-label="close" v-on:click='modal4 = false'></button>
+                                </header>
+                                <section class="modal-card-body">
+                                    <!-- Content ... -->
+                                    <input class="input" type="text" placeholder="New List Name" v-model='newToDoList' />
+                                </section>
+                                <footer class="modal-card-foot">
+                                    <button class="button is-success" v-on:click='editToDo(todo)'>Save</button>
+                                    <button class="button" v-on:click='modal4 = false'>Cancel</button>
+                                </footer>
+                            </div>
+                        </div>
+
+
+                        <span class="icon is-small ml-5" v-on:click='openDeleteToDo(todo)'>
+                                <i class="fas fa-trash-alt"></i>
+                            </span>
+                        <!--Modal Delete todolist-->
+                        <!--Modal delete-->
+                        <div class="modal" :class="{'is-active' : modal5}">
+                            <div class="modal-background"></div>
+                            <div class="modal-card">
+                                <header class="modal-card-head">
+                                    <p class="modal-card-title">Delete Task</p>
+                                    <button class="delete" aria-label="close" v-on:click='modal5 = false, test = []'></button>
+                                </header>
+                                <section class="modal-card-body">
+                                    <!-- Content ... -->
+                                    <span>คุณต้องการลบ Task {{newToDoList}} ใช่หรือไม่?</span>
+                                </section>
+                                <footer class="modal-card-foot">
+                                    <button class="button is-danger" v-on:click='deleteToDo(todo)'>Confirm</button>
+                                    <button class="button" v-on:click='modal5 = false, test = []'>Cancel</button>
+                                </footer>
+                            </div>
+                        </div>
+                        <div class="box level py-3 my-2" v-for='(label, index) in sortTask' v-if='hideCompleteAndFlag(label, todo)'>
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" v-model='label.isComplete' :key="label.id"/>
+                                    <span :class="{ 'line': label.isComplete}" :style='{color: label.color}'>{{label.name}} <span v-if='label.flag' v-html='icon'></span> <span v-if='label.date !== ""'>(Due by{{label.date}} )</span></span>
+                                </label>
+                            </div>
+                            <div class="level-right">
+                                <span class="icon is-small" v-on:click='openEditTask(label)'>
+                                <i class="fas fa-edit"></i>
+                                </span>
+
+                                <!--Modal edit-->
+                                <div class="modal" :class="{'is-active' : modal1}">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+                                        <header class="modal-card-head">
+                                            <p class="modal-card-title">Edit Task</p>
+                                            <button class="delete" aria-label="close" v-on:click='modal1 = false'></button>
+                                        </header>
+                                        <section class="modal-card-body">
+                                            <!-- Content ... -->
+                                            <input class="input" type="text" placeholder="New Task Name" v-model='newTaskName' />
+                                            <input class="input mt-2" type="date" v-model='newDate' />
+                                            <div class='columns'>
+                                                <div class="column is-12">
+                                                    <div class="field">
+                                                        <div class="control mt-3">
+                                                            <label class="checkbox">
+                                                                <input type="checkbox" style="width: 35px;height: 35px;margin-top: 2px;vertical-align: -12px;" v-model='newFlag'>
+                                                                <span style="font-weight: bold;">Flag</span>
+                                                            </label>
+                                                            <label class="black">
+                                                                <input type="radio" name="color2" value="black" v-model='newColor'>
+                                                                <div class="layer"></div>
+                                                                <div class="button csize" style="background-color: black;"><span></span></div>
+                                                            </label>
+                                                            <label class="red">
+                                                                <input type="radio" name="color2" value="red" v-model='newColor'>
+                                                                <div class="layer"></div>
+                                                                <div class="button csize" style="background-color: red;"><span></span></div>
+                                                            </label>
+                                                            <label class="green">
+                                                                <input type="radio" name="color2" value="green" v-model='newColor'>
+                                                                <div class="layer"></div>
+                                                                <div class="button csize" style="background-color: green;"><span></span></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="select" style="width: 100%;">
+                                                        <select v-model='newSelectList' style="width: 100%;">
+                                                            <option v-for='list in toDoList'>{{list.name}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                        <footer class="modal-card-foot">
+                                            <button class="button is-success" v-on:click='editTask(label)'>Save</button>
+                                            <button class="button" v-on:click='modal1 = false'>Cancel</button>
+                                        </footer>
+                                    </div>
+                                </div>
+                                <span class="icon is-small ml-5" v-on:click='openDeleteTask(label)'>
+                                <i class="fas fa-trash-alt"></i>
+                            </span>
+
+                                <!--Modal delete-->
+                                <div class="modal" :class="{'is-active' : modal2}">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+                                        <header class="modal-card-head">
+                                            <p class="modal-card-title">Delete Task</p>
+                                            <button class="delete" aria-label="close" v-on:click='modal2 = false'></button>
+                                        </header>
+                                        <section class="modal-card-body">
+                                            <!-- Content ... -->
+                                            <span>คุณต้องการลบ Task {{newTaskName}} ใช่หรือไม่?</span>
+                                        </section>
+                                        <footer class="modal-card-foot">
+                                            <button class="button is-danger" v-on:click='deleteTask(label)'>Confirm</button>
+                                            <button class="button" v-on:click='modal2 = false'>Cancel</button>
+                                        </footer>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns mt-5">
+                        <div class="column is-3">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="text" placeholder="Task Name" v-model='taskName' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="date" v-model='date' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="select" style="width: 100%;">
+                                <select v-model='selectList' style="width: 100%;">
+                                    <option v-for='list in toDoList'>{{list.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field mr-0">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" style='width: 36px;height: 36px;margin-top: 2px;' v-model='flag'>
+                                        <span style="vertical-align: 12px;font-weight: bold">Flag</span>
+                                    </label>
+                                    <label class="black">
+                                        <input type="radio" name="color" value="black" v-model='color' checked>
+                                        <div class="layer"></div>
+                                        <div class="button csize" style="background-color: black;"><span></span></div>
+                                    </label>
+                                    <label class="red">
+                                        <input type="radio" name="color" value="red" v-model='color'>
+                                        <div class="layer"></div>
+                                        <div class="button csize" style="background-color: red;"><span></span></div>
+                                    </label>
+                                    <label class="green" >
+                                        <input type="radio" name="color" value="green" v-model='color'>
+                                        <div class="layer"></div>
+                                        <div class="button csize" style="background-color: green;"><span></span></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <p class="control">
+                                <button class="button is-info" v-on:click='addTask'> Add New Task </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div  v-for='(list, index) in toDoList' class="mt-5">
+                    <div class="card">
+                        <header class="card-header has-background-primary">
+                            <p class="card-header-title">Filter of {{list.name}}</p>
+                            <p class="card-header-icon">
+                                <span class="card-header-icon icon">
+                                    <i class="fas fa-filter" data-target='modal'></i>
+                                </span>
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" v-model='list.hideComp'/>
+                                            Hide completed tasks
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" v-model='list.showFlagOnly'/>
+                                            Show only flagged tasks
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-5">
+                        <header class="card-header has-background-primary">
+                            <p class="card-header-title">Sort of {{list.name}}</p>
+                            <p class="card-header-icon">
+                                <span class="card-header-icon icon">
+                                    <i class="fas fa-filter" data-target='modal'></i>
+                                </span>
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='1'checked/>
+                                        Sort alphabetically
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='2'/>
+                                        Sort incomplete tasks 
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='3'/>
+                                        Sort flagged task first 
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <label>
+                                        <input type="radio" style="display: inline;" v-model='sortNum' value='4'/>
+                                        Sort by due date (ascending)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                task: [],
+                toDoList: [],
+                sortList: [],
+                taskIDCount: 0,
+                toDoListCount: 0,
+                taskName: '',
+                newTaskName: '',
+                newDate: '',
+                newToDoList: '',
+                modal1: false,
+                modal2: false,
+                modal3: false,
+                modal4: false,
+                modal5: false,
+                hideComp: false,
+                showFlagOnly: false,
+                sortNum: "1",
+                editTaskID: 0,
+                editListID: 0,
+                completed: 0,
+                inComplete: 0,
+                selectList: '',
+                newSelectList: '',
+                color: 'black',
+                newColor: '',
+                flag: false,
+                newFlag: false,
+                date: '',
+                icon: '<i class="fa fa-flag" aria-hidden="true"></i>',
+                test: []
+            },
+            methods: {
+                addTask() {
+                    namee = this.taskName
+                    list = this.selectList
+                    show = this.showComp
+                    if (this.selectList !== '' && this.selectList !== null) {
+                        if (this.taskName !== '' && this.taskName != null) {
+                            this.task.push({
+                                id: this.task.length + 1,
+                                name: namee,
+                                isComplete: false,
+                                color: this.color,
+                                flag: this.flag,
+                                date: this.date,
+                                listName: list,
+                                showTask: show 
+                            })
+                            this.taskName = ''
+                            this.date = ''
+                            this.flag = false
+                            this.color = 'black'
+                        } else {
+                            alert("Task ห้ามเว้นว่าง")
+                        }
+                    } else {
+                        alert("กรุณาเลือก List ก่อนกดยืนยัน")
+                    }
+
+
+                },
+                openEditTask(label) {
+                    this.modal1 = true
+
+                    function find(val) {
+                        return val.id == label.id
+                    }
+                    let selectTask = this.task.filter(find)[0]
+                    this.newTaskName = selectTask.name
+                    this.newDate = selectTask.date
+                    this.newFlag = selectTask.flag
+                    this.editTaskID = selectTask.id
+                    this.newColor = selectTask.color
+                    this.newSelectList = selectTask.listName
+                },
+                editTask(label) {
+                    let selectTask = this.task.filter((val) => {
+                        return val.id == this.editTaskID
+                    })[0]
+                    if (this.newTaskName !== '' & this.newTaskName !== null) {
+                        selectTask.name = this.newTaskName
+                        selectTask.date = this.newDate
+                        selectTask.flag = this.newFlag
+                        selectTask.color = this.newColor
+                        selectTask.listName = this.newSelectList
+                        this.modal1 = false
+                    } else {
+                        alert("Task ห้ามเว้นว่าง")
+                    }
+
+                },
+                openDeleteTask(label) {
+                    this.modal2 = true
+
+                    function find(val) {
+                        return val.id == label.id
+                    }
+                    let selectTask = this.task.filter(find)[0]
+                    this.newTaskName = selectTask.name
+                    this.editTaskID = selectTask.id
+                },
+                deleteTask(label) {
+                    let selectTask = this.task.filter((val) => {
+                        return val.id == this.editTaskID
+                    })[0]
+                    let index = this.task.indexOf(selectTask)
+                    this.task.splice(index, 1)
+                    this.modal2 = false
+                },
+                addToDoList() {
+                    if (this.newToDoList !== '' && this.newToDoList !== null) {
+                        this.toDoList.push({
+                            id: this.toDoListCount += 1,
+                            name: this.newToDoList,
+                            hideComp: false,
+                            showFlagOnly: false,
+                            sortNum: '1'
+                        })
+                        this.newToDoList = ''
+                        this.modal3 = false
+                    } else {
+                        alert('ห้ามเว้นว่าง')
+                    }
+                },
+                openEditToDo(todo) {
+                    this.modal4 = true
+
+                    function find(val) {
+                        return val.id === todo.id
+                    }
+                    let selectList = this.toDoList.filter(find)[0]
+                    this.newToDoList = selectList.name
+                    this.editListID = selectList.id
+                },
+                editToDo(todo) {
+                    let selectList = this.toDoList.filter((val) => {
+                        return val.id === this.editListID
+                    })[0]
+                    if(this.newToDoList === ''){
+                        alert('ห้ามเว้นว่าง')
+                    } else {
+                        for(let i = 0 ; i < this.task.length; i++){
+                            if(this.task[i].listName === selectList.name){
+                                this.task[i].listName = this.newToDoList
+                            }
+                        }
+                        selectList.name = this.newToDoList
+                        this.modal4 = false
+                    }
+                },
+                openDeleteToDo(todo) {
+                    this.modal5 = true
+
+                    function find(val) {
+                        return val.id == todo.id
+                    }
+                    let selectList = this.toDoList.filter(find)[0]
+                    this.newToDoList = selectList.name
+                    this.editListID = selectList.id
+                    for(let i = 0 ; i < this.task.length; i++){
+                        if(this.task[i].listName === todo.name){
+                            this.test.push(i)
+                        }
+                    }
+                },
+                deleteToDo(todo) {
+                    let count = 0
+                    let selectList = this.toDoList.filter((val) => {
+                        return val.id === this.editListID
+                    })[0]
+                    let indexOfList = this.toDoList.indexOf(selectList)
+                    this.toDoList.splice(indexOfList, 1)
+                    for(let j = 0; j < this.test.length; j++){
+                        this.task.splice((this.test[j]-j), 1)
+                    }
+                    this.test = []
+                    this.newToDoList = ''
+                    this.modal5 = false
+                },
+                hideCompleteAndFlag(label, todo){
+                    let show = false
+                    if(label.listName === todo.name){
+                        if(this.toDoList[this.toDoList.indexOf(todo)].hideComp === true && this.toDoList[this.toDoList.indexOf(todo)].showFlagOnly === true){
+                            if(label.isComplete === true){
+                                return show
+                            } else if (label.flag === false){
+                                return show
+                            } else {
+                                return !show
+                            }
+                        } else if (this.toDoList[this.toDoList.indexOf(todo)].hideComp === true){
+                            if(label.isComplete === true){
+                                return show
+                            } else {
+                                return !show
+                            }
+                        } else if (this.toDoList[this.toDoList.indexOf(todo)].showFlagOnly === true){
+                            if(label.flag === true){
+                                return !show
+                            } else {
+                                return show
+                            }
+                        } else {
+                            return !show
+                        }
+                    }
+                }
+            },
+            computed: {
+                complete() {
+                    let count = 0
+                    for (let i = 0; i < this.task.length; i++) {
+                        if (this.task[i].isComplete === true) {
+                            count++;
+                        }
+                    }
+                    return count
+                },
+                flagCount() {
+                    let count = 0
+                    for (let i = 0; i < this.task.length; i++) {
+                        if (this.task[i].flag === true) {
+                            count++;
+                        }
+                    }
+                    return count
+                },
+                sortTask(){
+                    function compare(a, b) {
+                        if(a.listName === b.listName){
+                            if (a.name.toUpperCase() < b.name.toUpperCase())
+                                return -1;
+                            else if (a.name.toUpperCase() > b.name.toUpperCase())
+                                return 1;
+                            return 0
+                        }
+                    }
+                    function compare2(a, b) {
+                        if(a.listName === b.listName){
+                            if(a.isComplete === b.isComplete){
+                                return 0
+                            } else if (a.isComplete > b.isComplete){
+                                return 1
+                            } else if (a.isComplete < b.isComplete){
+                                return -1
+                            }
+                        }
+                    }
+                    function compare3(a, b) {
+                        if(a.listName === b.listName){
+                            if(a.flag === b.flag){
+                                return 0
+                            } else if (a.flag > b.flag){
+                                return -1
+                            } else if (a.flag < b.flag){
+                                return 1
+                            }
+                        }
+                    }
+                    function compare4(a, b) {
+                        if(a.listName === b.listName){
+                            if (a.date < b.date && a.date !== '' && b.date !== ''){
+                                return -1
+                            } else if (a.date > b.date && a.date !== '' && b.date !== ''){
+                                return 1
+                            } else if ( a.date === ''){
+                                return 1
+                            } else if(b.date === ''){
+                                return -1
+                            }
+                        }
+                    }
+                    if (this.sortNum === '1'){
+                        return this.task.sort(compare);
+                    }
+                    if (this.sortNum === '2'){
+                        return this.task.sort(compare2)
+                    }
+                    if (this.sortNum === '3'){
+                        return this.task.sort(compare3)
+                    }
+                    if (this.sortNum === '4'){
+                        return this.task.sort(compare4)
+                    }
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>
