@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <title>Intro to Javascript</title>
+</head>
+<body>
+    <div style="margin-left: 20px; margin-top: 20px;">
+        <h2>Javascript - What can it do?</h2>
+        <table width="80%" id='table1'>
+            <tr>
+                <td>
+                    <h4>1. JavaScript Can Change HTML Content</h4>
+                    <p>
+                        <h3 id="ele1">Hello, I love Python :)</h3>
+                        <script>
+                            console.log('XXX')
+                        </script>
+                    </p>
+                        <button onclick="document.getElementById('ele1').innerHTML = 'I also love Javascript!'">Click HERE!</button>
+
+                </td>
+                <td>
+                    <h4>2. JavaScript Can Change HTML Attribute Values</h4>
+                    <p>
+                        <img id="ele2" src="images/dunk1.jpg" height="300px"><br>
+                        <button onclick="document.getElementById('ele2').src = 'images/dunk2.jpg'">Click HERE!</button>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h4>3. JavaScript Can Change HTML Styles (CSS)</h4>
+                    <p>
+                        <span id="ele3">Javascript is not Java -"-</span><br>
+                        <button onclick="document.getElementById('ele3').style.fontSize = '2em'">Click HERE!</button>
+                    </p>
+                </td>
+                <td>
+                    <h4>4. JavaScript Can Create / Remove HTML Elements</h4>
+                    <p>
+                        <ul id="ele4" onclick="addItem()">
+                            <li>Item 1</li>
+                            <li>Item 2</li>
+                        </ul>
+                        <button onclick="addItem()">Click HERE to Create!</button>
+                        <button onclick="removeItem()">Click HERE to Remove!</button>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        function addItem(){
+            let li = document.createElement("li")
+            li.innerText = "New Item"
+            let ul = document.getElementById('ele4')
+            ul.appendChild(li)
+        }
+
+        function removeItem(){
+            let ul = document.getElementById('ele4')
+            let len = ul.childNodes.length
+            ul.removeChild(ul.childNodes[len - 1])
+        }
+        for (let i = 0; i <=10; i++){
+            if (i < 5) {
+                continue;
+                console.log(10 + i);
+            } else {
+                console.log(i);
+            }
+        }
+
+    </script>
+</body>
+</html>

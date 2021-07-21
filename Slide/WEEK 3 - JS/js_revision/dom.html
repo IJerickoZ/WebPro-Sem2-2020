@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/pre_style.css">
+    <title>HTML DOM</title>
+</head>
+
+<body>
+    <div id="container" class="container mt-3">
+        <h1 id="header">HTML DOM</h1>
+        <div class="row">
+            <div class="col-8">
+                <div id="text1">
+                    When a web page is loaded, the browser creates a Document Object Model of the page.
+                </div>
+                <div id="text2">
+                    The HTML DOM model is constructed as a tree of Objects:<br>
+                    <img class="img-fluid" src="images/html_dom_tree.png">
+                </div>
+                <br>
+                <div>
+                    With the object model, JavaScript gets all the power it needs to create dynamic HTML:
+                    <ul>
+                        <li>JavaScript can change all the HTML elements in the page</li>
+                        <li>JavaScript can change all the HTML attributes in the page</li>
+                        <li>JavaScript can change all the CSS styles in the page</li>
+                        <li>JavaScript can remove existing HTML elements and attributes</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4">
+                <form>
+                    <h3>Newsletter Subscription</h3>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                            placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                            else.</small>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Send me a lot of emails</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

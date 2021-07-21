@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <title>Javascript Display</title>
+</head>
+<body onload="loadPage()">
+    <div style="margin-left: 20px; margin-top: 20px;">
+        <h2>JavaScript can "display" data in different ways:</h2>
+        <h3>innerHTML</h3>
+        <p>
+            <div id="ele1">Hi, how are you?</div>
+            <code>document.getElementById('ele1').innerHMTL = 'Hello!!!'</code>
+        </p>
+        <hr>
+        <h43>document.write()</h3>
+        <p>
+            <script>
+                document.write('<span style="color: blue;">I am writing...</span>')
+            </script>
+        </p>
+    </div>
+    <script>
+        function loadPage(){
+            setTimeout(function(){ 
+                document.getElementById('ele1').innerHTML = '<span style="color: red;">Hello!!!</span>' 
+            }, 2000)
+            setTimeout(function(){ 
+                alert('I am so alerted!')
+                console.log('HEYYYY, I am console.log()')
+            }, 3000)
+        }
+    </script>
+</body>
+</html>

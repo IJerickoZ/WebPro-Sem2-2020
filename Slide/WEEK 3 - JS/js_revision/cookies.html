@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/pre_style.css">
+    <title>JS Cookies & Local Storage</title>
+</head>
+<body>
+<div style="margin-left: 50px; margin-top: 20px; padding-bottom: 100px; padding-right: 100px;">
+        <h2>JS Cookies & Local Storage</h2>
+        <h3>1. Creating cookies</h3>
+<pre class="prettyprint linenums lang-java">
+    function createCookie(){
+        var value = document.getElementById('input1').value
+        // Create a cookie, valid across the entire site:
+        Cookies.set('myCookie', value)
+        // Create a cookie that expires 7 days from now, valid across the entire site:
+        Cookies.set('myCookie7', value, { expires: 7 })
+
+        document.getElementById('input1').innerHTML = Cookies.get('myCookie')
+    }
+</pre>
+        <p>
+            <input type="text" id="input1" class="form-control">
+        </p>
+        <button class="btn" onclick="createCookie()">Create Cookie</button>
+        <hr>
+        <h3>2. Reading cookies</h3>
+<pre class="prettyprint linenums lang-java">
+    function readCookie(){
+        var myCookie = Cookies.get('myCookie')
+        document.getElementById('result1').innerHTML = myCookie
+    }
+</pre>
+        <p>
+            <div id="result1"></div>
+        </p>
+        <button class="btn" onclick="readCookie()">Read Cookie</button>
+        <hr>
+        <h3>3. Deleting cookies</h3>
+<pre class="prettyprint linenums lang-java">
+    function deleteCookie(){
+        Cookies.remove('myCookie')
+    }
+</pre>
+        <button class="btn" onclick="deleteCookie()">Delete Cookie</button>
+        <hr>
+        <h3>4. Local Storage</h3>
+        <p>
+        The localStorage object stores data with no expiration date. 
+        The data will not be deleted when the browser is closed, and will be available the next day, week, or year.
+        </p>
+<pre class="prettyprint linenums lang-java">
+    function setLocalStorage(){
+        var value = document.getElementById('input1').value
+        localStorage.setItem("myVar", value)
+    }
+
+    function getLocalStorage(){
+        var lastname = localStorage.getItem("myVar")
+    }
+
+    function removeLocalStorage(){
+        localStorage.removeItem("myVar")
+    }
+</pre>
+        <p>
+            <input type="text" id="input2" class="form-control">
+        </p>
+        <button class="btn" onclick="setLocalStorage()">Set Local Storage</button>
+        <br><br>
+        <p>
+            <div id="result2"></div>
+        </p>
+        <button class="btn" onclick="getLocalStorage()">Get Local Storage</button>
+        <br><br>
+        <button class="btn" onclick="removeLocalStorage()">Remove Local Storage</button>
+</div>
+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+
+    <script>
+        Cookies.set('myCookie', 'value')
+        function createCookie(){
+            var value = document.getElementById('input1').value
+            // Create a cookie, valid across the entire site:
+            Cookies.set('myCookie', value)
+            // Create a cookie that expires 7 days from now, valid across the entire site:
+            Cookies.set('myCookie7', value, { expires: 7 })
+        }
+
+        function readCookie(){
+            var myCookie = Cookies.get('myCookie')
+            document.getElementById('result1').innerHTML = myCookie
+        }
+
+        function deleteCookie(){
+            Cookies.remove('myCookie')
+        }
+
+        function setLocalStorage(){
+        var value = document.getElementById('input2').value
+            localStorage.setItem("myVar", value)
+        }
+
+        function getLocalStorage(){
+            var myVar = localStorage.getItem("myVar")
+            document.getElementById('result2').innerHTML = myVar
+        }
+
+        function removeLocalStorage(){
+            localStorage.removeItem("myVar")
+        }
+    </script>
+</body>
+</html>
